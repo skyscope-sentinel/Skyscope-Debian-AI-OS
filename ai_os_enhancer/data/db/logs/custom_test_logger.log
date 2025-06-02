@@ -1,0 +1,5 @@
+2025-06-02 18:33:44,067 - MyCustomTestLogger - DEBUG - logger_setup:109 - This is a DEBUG message from MyCustomTestLogger.
+2025-06-02 18:33:44,067 - MyCustomTestLogger - INFO - logger_setup:110 - This is an INFO message from MyCustomTestLogger.
+2025-06-02 18:33:44,067 - MyCustomTestLogger - WARNING - logger_setup:111 - This is a WARNING message from MyCustomTestLogger.
+2025-06-02 18:33:44,067 - MyCustomTestLogger - ERROR - logger_setup:112 - This is an ERROR message from MyCustomTestLogger.
+2025-06-02 18:33:44,067 - MyCustomTestLogger - CRITICAL - logger_setup:113 - This is a CRITICAL message from MyCustomTestLogger.

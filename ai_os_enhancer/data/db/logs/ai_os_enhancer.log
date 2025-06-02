@@ -1,0 +1,637 @@
+2025-06-02 18:33:44,066 - ai_os_enhancer_logger - INFO - logger_setup:102 - This is an INFO message from the default logger.
+2025-06-02 18:44:04,784 - Orchestrator - INFO - orchestrator:394 - Orchestrator logger re-initialized for run.
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:396 - AI OS Enhancer starting up. PID: 4789
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:397 - Default Ollama Model: qwen2.5vl
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:398 - Human Approval Threshold: HIGH
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:399 - Monitored script paths: ['/app/ai_os_enhancer/sample_scripts_for_orchestrator/orchestrator_test_script.sh']
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:61 - AI OS Enhancer Initializing...
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:74 - Using database path: /app/ai_os_enhancer/data/db
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:75 - Log file configured at: /app/ai_os_enhancer/data/db/logs/ai_os_enhancer.log
+2025-06-02 18:44:04,785 - Orchestrator - INFO - orchestrator:76 - Backups will be stored under: /app/ai_os_enhancer/data/db/backups
+2025-06-02 18:44:04,802 - Orchestrator - INFO - orchestrator:85 - System Analyzer detected OS: Ubuntu 24.04.2 LTS
+2025-06-02 18:44:04,802 - Orchestrator - INFO - orchestrator:89 - System initialized.
+2025-06-02 18:44:04,802 - Orchestrator - INFO - orchestrator:414 - ====== Starting Orchestrator Cycle #1 (Stability: 100.00) ======
+2025-06-02 18:44:04,802 - Orchestrator - ERROR - orchestrator:417 - System stability (100.00) is below threshold. Skipping enhancement cycle. Requiring human intervention.
+2025-06-02 18:44:04,813 - Orchestrator - WARNING - orchestrator:159 - Monitored service 'cron' is NOT active/running. Status: inactive
+2025-06-02 18:44:04,820 - Orchestrator - WARNING - orchestrator:166 - System stability score reduced to 85.00 due to service issues.
+2025-06-02 18:44:04,820 - Orchestrator - INFO - orchestrator:177 - Current system stability score: 85.00
+2025-06-02 18:44:04,820 - Orchestrator - CRITICAL - orchestrator:48 - USER_ALERT (CRITICAL): System requires human intervention. Pausing autonomous operations.
+2025-06-02 18:44:04,820 - Orchestrator - INFO - orchestrator:438 - Orchestrator stopped by user (Ctrl+C or EOF) during human intervention pause.
+2025-06-02 18:44:04,820 - Orchestrator - INFO - orchestrator:453 - AI OS Enhancer shutting down.
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:394 - Orchestrator logger re-initialized for run.
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:396 - AI OS Enhancer starting up. PID: 4963
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:397 - Default Ollama Model: qwen2.5vl
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:398 - Human Approval Threshold: HIGH
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:399 - Monitored script paths: ['/app/ai_os_enhancer/sample_scripts_for_orchestrator/orchestrator_test_script.sh']
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:61 - AI OS Enhancer Initializing...
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:74 - Using database path: /app/ai_os_enhancer/data/db
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:75 - Log file configured at: /app/ai_os_enhancer/data/db/logs/ai_os_enhancer.log
+2025-06-02 18:44:27,221 - Orchestrator - INFO - orchestrator:76 - Backups will be stored under: /app/ai_os_enhancer/data/db/backups
+2025-06-02 18:44:27,245 - Orchestrator - INFO - orchestrator:85 - System Analyzer detected OS: Ubuntu 24.04.2 LTS
+2025-06-02 18:44:27,245 - Orchestrator - INFO - orchestrator:89 - System initialized.
+2025-06-02 18:44:27,245 - Orchestrator - INFO - orchestrator:414 - ====== Starting Orchestrator Cycle #1 (Stability: 100.00) ======
+2025-06-02 18:44:27,245 - Orchestrator - INFO - orchestrator:202 - --- Starting new enhancement cycle ---
+2025-06-02 18:44:27,245 - Orchestrator - INFO - orchestrator:204 - Phase 1: Analyzing System State...
+2025-06-02 18:44:27,284 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/getty.target.wants
+2025-06-02 18:44:27,284 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/getty.target.wants
+2025-06-02 18:44:27,285 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:44:27,285 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:44:27,285 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sockets.target.wants
+2025-06-02 18:44:27,285 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sockets.target.wants
+2025-06-02 18:44:27,285 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.requires
+2025-06-02 18:44:27,285 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.requires
+2025-06-02 18:44:27,285 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.wants
+2025-06-02 18:44:27,285 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.wants
+2025-06-02 18:44:27,286 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:44:27,286 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:44:27,286 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/timers.target.wants
+2025-06-02 18:44:27,286 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/timers.target.wants
+2025-06-02 18:44:27,289 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:27,289 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:27,289 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/sockets.target.wants
+2025-06-02 18:44:27,289 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/sockets.target.wants
+2025-06-02 18:44:27,289 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/timers.target.wants
+2025-06-02 18:44:27,289 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/timers.target.wants
+2025-06-02 18:44:27,294 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:44:27,294 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:44:27,294 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:44:27,295 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:44:27,302 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:44:27,302 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:44:27,302 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:44:27,302 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:44:27,302 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:44:27,303 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:44:27,303 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:44:27,303 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:44:27,303 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:44:27,303 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:44:27,304 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:44:27,304 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:44:27,306 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:44:27,306 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:44:27,308 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:44:27,308 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:44:27,309 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:44:27,309 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:44:27,310 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:44:27,310 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:44:27,311 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sudo.service
+2025-06-02 18:44:27,311 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sudo.service
+2025-06-02 18:44:27,312 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:44:27,312 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:44:27,314 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-systemd
+2025-06-02 18:44:27,314 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-systemd
+2025-06-02 18:44:27,315 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:44:27,315 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:44:27,318 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:44:27,318 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:44:27,319 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:44:27,319 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:44:27,319 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:44:27,319 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:44:27,324 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:44:27,324 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:44:27,325 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:44:27,325 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:44:27,325 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:44:27,325 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:44:27,326 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:44:27,326 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:44:27,326 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:44:27,326 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:44:27,326 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:44:27,327 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:44:27,333 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:27,333 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:27,334 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:44:27,334 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:44:27,341 - SystemStateAnalyzer - ERROR - system_analyzer:175 - Permission denied reading file: /etc/shadow
+2025-06-02 18:44:27,342 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/shadow
+2025-06-02 18:44:27,342 - Orchestrator - INFO - orchestrator:224 - Analyzing up to 3 items sequentially (concurrency not implemented).
+2025-06-02 18:44:27,342 - Orchestrator - INFO - orchestrator:227 - Analyzing item 1/3: (config) /etc/sysctl.conf
+2025-06-02 18:44:27,342 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.conf using model qwen2.5vl.
+2025-06-02 18:44:27,346 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:44:27,346 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.conf.
+2025-06-02 18:44:27,346 - Orchestrator - INFO - orchestrator:227 - Analyzing item 2/3: (config) /etc/sysctl.d/10-bufferbloat.conf
+2025-06-02 18:44:27,346 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-bufferbloat.conf using model qwen2.5vl.
+2025-06-02 18:44:27,350 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:44:27,350 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-bufferbloat.conf.
+2025-06-02 18:44:27,350 - Orchestrator - INFO - orchestrator:227 - Analyzing item 3/3: (config) /etc/sysctl.d/10-console-messages.conf
+2025-06-02 18:44:27,350 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-console-messages.conf using model qwen2.5vl.
+2025-06-02 18:44:27,352 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:44:27,352 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-console-messages.conf.
+2025-06-02 18:44:27,352 - Orchestrator - INFO - orchestrator:240 - No system items were successfully analyzed by Ollama.
+2025-06-02 18:44:27,352 - Orchestrator - INFO - orchestrator:241 - --- Enhancement cycle ended (no analysis results) ---
+2025-06-02 18:44:27,364 - Orchestrator - WARNING - orchestrator:159 - Monitored service 'cron' is NOT active/running. Status: inactive
+2025-06-02 18:44:27,370 - Orchestrator - WARNING - orchestrator:166 - System stability score reduced to 79.00 due to service issues.
+2025-06-02 18:44:27,370 - Orchestrator - INFO - orchestrator:177 - Current system stability score: 79.00
+2025-06-02 18:44:27,370 - Orchestrator - INFO - orchestrator:445 - Cycle #1 finished. Next cycle in 30s.
+2025-06-02 18:44:57,401 - Orchestrator - INFO - orchestrator:414 - ====== Starting Orchestrator Cycle #2 (Stability: 79.00) ======
+2025-06-02 18:44:57,401 - Orchestrator - INFO - orchestrator:202 - --- Starting new enhancement cycle ---
+2025-06-02 18:44:57,401 - Orchestrator - INFO - orchestrator:204 - Phase 1: Analyzing System State...
+2025-06-02 18:44:57,407 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/getty.target.wants
+2025-06-02 18:44:57,407 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/getty.target.wants
+2025-06-02 18:44:57,408 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:44:57,408 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:44:57,408 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sockets.target.wants
+2025-06-02 18:44:57,408 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sockets.target.wants
+2025-06-02 18:44:57,408 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.requires
+2025-06-02 18:44:57,408 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.requires
+2025-06-02 18:44:57,408 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.wants
+2025-06-02 18:44:57,408 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.wants
+2025-06-02 18:44:57,408 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:44:57,408 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:44:57,408 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/timers.target.wants
+2025-06-02 18:44:57,408 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/timers.target.wants
+2025-06-02 18:44:57,409 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:57,409 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:57,409 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/sockets.target.wants
+2025-06-02 18:44:57,409 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/sockets.target.wants
+2025-06-02 18:44:57,409 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/timers.target.wants
+2025-06-02 18:44:57,409 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/timers.target.wants
+2025-06-02 18:44:57,410 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:44:57,410 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:44:57,410 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:44:57,410 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:44:57,412 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:44:57,412 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:44:57,412 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:44:57,412 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:44:57,412 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:44:57,412 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:44:57,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:44:57,413 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:44:57,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:44:57,413 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:44:57,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:44:57,414 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:44:57,414 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:44:57,414 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:44:57,416 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:44:57,416 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:44:57,416 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:44:57,416 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:44:57,417 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:44:57,417 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:44:57,418 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sudo.service
+2025-06-02 18:44:57,418 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sudo.service
+2025-06-02 18:44:57,418 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:44:57,418 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:44:57,418 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-systemd
+2025-06-02 18:44:57,418 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-systemd
+2025-06-02 18:44:57,419 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:44:57,419 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:44:57,420 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:44:57,420 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:44:57,421 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:44:57,421 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:44:57,421 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:44:57,421 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:44:57,425 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:44:57,425 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:44:57,425 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:44:57,425 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:44:57,426 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:44:57,426 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:44:57,426 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:44:57,426 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:44:57,426 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:44:57,426 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:44:57,426 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:44:57,427 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:44:57,428 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:57,428 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:44:57,429 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:44:57,429 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:44:57,429 - SystemStateAnalyzer - ERROR - system_analyzer:175 - Permission denied reading file: /etc/shadow
+2025-06-02 18:44:57,430 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/shadow
+2025-06-02 18:44:57,430 - Orchestrator - INFO - orchestrator:224 - Analyzing up to 3 items sequentially (concurrency not implemented).
+2025-06-02 18:44:57,430 - Orchestrator - INFO - orchestrator:227 - Analyzing item 1/3: (config) /etc/sysctl.conf
+2025-06-02 18:44:57,430 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.conf using model qwen2.5vl.
+2025-06-02 18:44:57,433 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:44:57,433 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.conf.
+2025-06-02 18:44:57,433 - Orchestrator - INFO - orchestrator:227 - Analyzing item 2/3: (config) /etc/sysctl.d/10-bufferbloat.conf
+2025-06-02 18:44:57,433 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-bufferbloat.conf using model qwen2.5vl.
+2025-06-02 18:44:57,434 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:44:57,434 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-bufferbloat.conf.
+2025-06-02 18:44:57,434 - Orchestrator - INFO - orchestrator:227 - Analyzing item 3/3: (config) /etc/sysctl.d/10-console-messages.conf
+2025-06-02 18:44:57,434 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-console-messages.conf using model qwen2.5vl.
+2025-06-02 18:44:57,436 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:44:57,436 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-console-messages.conf.
+2025-06-02 18:44:57,436 - Orchestrator - INFO - orchestrator:240 - No system items were successfully analyzed by Ollama.
+2025-06-02 18:44:57,436 - Orchestrator - INFO - orchestrator:241 - --- Enhancement cycle ended (no analysis results) ---
+2025-06-02 18:44:57,444 - Orchestrator - WARNING - orchestrator:159 - Monitored service 'cron' is NOT active/running. Status: inactive
+2025-06-02 18:44:57,451 - Orchestrator - WARNING - orchestrator:166 - System stability score reduced to 58.00 due to service issues.
+2025-06-02 18:44:57,451 - Orchestrator - INFO - orchestrator:177 - Current system stability score: 58.00
+2025-06-02 18:44:57,451 - Orchestrator - INFO - orchestrator:445 - Cycle #2 finished. Next cycle in 30s.
+2025-06-02 18:45:27,481 - Orchestrator - INFO - orchestrator:414 - ====== Starting Orchestrator Cycle #3 (Stability: 58.00) ======
+2025-06-02 18:45:27,482 - Orchestrator - INFO - orchestrator:202 - --- Starting new enhancement cycle ---
+2025-06-02 18:45:27,482 - Orchestrator - INFO - orchestrator:204 - Phase 1: Analyzing System State...
+2025-06-02 18:45:27,486 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/getty.target.wants
+2025-06-02 18:45:27,486 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/getty.target.wants
+2025-06-02 18:45:27,486 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:45:27,486 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:45:27,486 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sockets.target.wants
+2025-06-02 18:45:27,486 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sockets.target.wants
+2025-06-02 18:45:27,487 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.requires
+2025-06-02 18:45:27,487 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.requires
+2025-06-02 18:45:27,487 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.wants
+2025-06-02 18:45:27,487 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.wants
+2025-06-02 18:45:27,487 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:45:27,487 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:45:27,487 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/timers.target.wants
+2025-06-02 18:45:27,487 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/timers.target.wants
+2025-06-02 18:45:27,487 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:45:27,487 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:45:27,487 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/sockets.target.wants
+2025-06-02 18:45:27,488 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/sockets.target.wants
+2025-06-02 18:45:27,488 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/timers.target.wants
+2025-06-02 18:45:27,488 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/timers.target.wants
+2025-06-02 18:45:27,489 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:45:27,489 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:45:27,489 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:45:27,489 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:45:27,491 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:45:27,491 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:45:27,491 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:45:27,491 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:45:27,491 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:45:27,491 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:45:27,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:45:27,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:45:27,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:45:27,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:45:27,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:45:27,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:45:27,493 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:45:27,493 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:45:27,494 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:45:27,495 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:45:27,495 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:45:27,495 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:45:27,496 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:45:27,496 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:45:27,497 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sudo.service
+2025-06-02 18:45:27,497 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sudo.service
+2025-06-02 18:45:27,497 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:45:27,497 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:45:27,497 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-systemd
+2025-06-02 18:45:27,498 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-systemd
+2025-06-02 18:45:27,498 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:45:27,498 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:45:27,500 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:45:27,500 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:45:27,500 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:45:27,500 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:45:27,500 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:45:27,501 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:45:27,504 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:45:27,504 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:45:27,504 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:45:27,504 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:45:27,505 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:45:27,505 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:45:27,505 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:45:27,505 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:45:27,505 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:45:27,505 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:45:27,505 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:45:27,506 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:45:27,507 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:45:27,507 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:45:27,508 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:45:27,508 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:45:27,508 - SystemStateAnalyzer - ERROR - system_analyzer:175 - Permission denied reading file: /etc/shadow
+2025-06-02 18:45:27,509 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/shadow
+2025-06-02 18:45:27,509 - Orchestrator - INFO - orchestrator:224 - Analyzing up to 3 items sequentially (concurrency not implemented).
+2025-06-02 18:45:27,509 - Orchestrator - INFO - orchestrator:227 - Analyzing item 1/3: (config) /etc/sysctl.conf
+2025-06-02 18:45:27,509 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.conf using model qwen2.5vl.
+2025-06-02 18:45:27,512 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:45:27,512 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.conf.
+2025-06-02 18:45:27,512 - Orchestrator - INFO - orchestrator:227 - Analyzing item 2/3: (config) /etc/sysctl.d/10-bufferbloat.conf
+2025-06-02 18:45:27,512 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-bufferbloat.conf using model qwen2.5vl.
+2025-06-02 18:45:27,514 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:45:27,514 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-bufferbloat.conf.
+2025-06-02 18:45:27,514 - Orchestrator - INFO - orchestrator:227 - Analyzing item 3/3: (config) /etc/sysctl.d/10-console-messages.conf
+2025-06-02 18:45:27,514 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-console-messages.conf using model qwen2.5vl.
+2025-06-02 18:45:27,516 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:45:27,516 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-console-messages.conf.
+2025-06-02 18:45:27,516 - Orchestrator - INFO - orchestrator:240 - No system items were successfully analyzed by Ollama.
+2025-06-02 18:45:27,516 - Orchestrator - INFO - orchestrator:241 - --- Enhancement cycle ended (no analysis results) ---
+2025-06-02 18:45:27,525 - Orchestrator - WARNING - orchestrator:159 - Monitored service 'cron' is NOT active/running. Status: inactive
+2025-06-02 18:45:27,531 - Orchestrator - WARNING - orchestrator:166 - System stability score reduced to 37.00 due to service issues.
+2025-06-02 18:45:27,532 - Orchestrator - CRITICAL - orchestrator:173 - System stability critically low (37.00)!
+2025-06-02 18:45:27,532 - Orchestrator - CRITICAL - orchestrator:48 - USER_ALERT (CRITICAL): System stability critically low (37.00)!
+2025-06-02 18:45:27,532 - Orchestrator - INFO - orchestrator:177 - Current system stability score: 37.00
+2025-06-02 18:45:27,532 - Orchestrator - CRITICAL - orchestrator:48 - USER_ALERT (CRITICAL): System requires human intervention. Pausing autonomous operations.
+2025-06-02 18:45:27,532 - Orchestrator - INFO - orchestrator:439 - Orchestrator stopped by user (Ctrl+C or EOF) during human intervention pause.
+2025-06-02 18:45:27,532 - Orchestrator - INFO - orchestrator:454 - AI OS Enhancer shutting down.
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:396 - AI OS Enhancer starting up. PID: 6322
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:397 - Default Ollama Model: qwen2.5vl
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:398 - Human Approval Threshold: HIGH
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:399 - Monitored script paths: []
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:61 - AI OS Enhancer Initializing...
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:74 - Using database path: /app/ai_os_enhancer/data/db
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:75 - Log file configured at: /app/ai_os_enhancer/data/db/logs/ai_os_enhancer.log
+2025-06-02 18:48:36,388 - Orchestrator - INFO - orchestrator:76 - Backups will be stored under: /app/ai_os_enhancer/data/db/backups
+2025-06-02 18:48:36,404 - Orchestrator - INFO - orchestrator:85 - System Analyzer detected OS: Ubuntu 24.04.2 LTS
+2025-06-02 18:48:36,404 - Orchestrator - INFO - orchestrator:89 - System initialized.
+2025-06-02 18:48:36,404 - Orchestrator - INFO - orchestrator:414 - ====== Starting Orchestrator Cycle #1 (Stability: 100.00) ======
+2025-06-02 18:48:36,405 - Orchestrator - INFO - orchestrator:202 - --- Starting new enhancement cycle ---
+2025-06-02 18:48:36,405 - Orchestrator - INFO - orchestrator:204 - Phase 1: Analyzing System State...
+2025-06-02 18:48:36,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/getty.target.wants
+2025-06-02 18:48:36,413 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/getty.target.wants
+2025-06-02 18:48:36,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:48:36,413 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:48:36,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sockets.target.wants
+2025-06-02 18:48:36,413 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sockets.target.wants
+2025-06-02 18:48:36,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.requires
+2025-06-02 18:48:36,413 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.requires
+2025-06-02 18:48:36,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.wants
+2025-06-02 18:48:36,413 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.wants
+2025-06-02 18:48:36,413 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:48:36,414 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:48:36,414 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/timers.target.wants
+2025-06-02 18:48:36,414 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/timers.target.wants
+2025-06-02 18:48:36,414 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:48:36,414 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:48:36,414 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/sockets.target.wants
+2025-06-02 18:48:36,414 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/sockets.target.wants
+2025-06-02 18:48:36,414 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/timers.target.wants
+2025-06-02 18:48:36,414 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/timers.target.wants
+2025-06-02 18:48:36,415 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:48:36,415 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:48:36,415 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:48:36,415 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:48:36,417 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:48:36,417 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:48:36,417 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:48:36,417 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:48:36,418 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:48:36,418 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:48:36,418 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:48:36,418 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:48:36,418 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:48:36,418 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:48:36,419 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:48:36,419 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:48:36,420 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:48:36,420 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:48:36,421 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:48:36,421 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:48:36,421 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:48:36,421 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:48:36,422 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:48:36,422 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:48:36,423 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sudo.service
+2025-06-02 18:48:36,423 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sudo.service
+2025-06-02 18:48:36,423 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:48:36,424 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:48:36,424 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-systemd
+2025-06-02 18:48:36,424 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-systemd
+2025-06-02 18:48:36,424 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:48:36,424 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:48:36,426 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:48:36,426 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:48:36,426 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:48:36,426 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:48:36,427 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:48:36,427 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:48:36,430 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:48:36,430 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:48:36,431 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:48:36,431 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:48:36,431 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:48:36,431 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:48:36,431 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:48:36,431 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:48:36,432 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:48:36,432 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:48:36,432 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:48:36,432 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:48:36,433 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:48:36,433 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:48:36,434 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:48:36,434 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:48:36,435 - SystemStateAnalyzer - ERROR - system_analyzer:175 - Permission denied reading file: /etc/shadow
+2025-06-02 18:48:36,435 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/shadow
+2025-06-02 18:48:36,435 - Orchestrator - INFO - orchestrator:224 - Analyzing up to 3 items sequentially (concurrency not implemented).
+2025-06-02 18:48:36,435 - Orchestrator - INFO - orchestrator:227 - Analyzing item 1/3: (config) /etc/sysctl.conf
+2025-06-02 18:48:36,435 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.conf using model qwen2.5vl.
+2025-06-02 18:48:36,438 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:48:36,438 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.conf.
+2025-06-02 18:48:36,438 - Orchestrator - INFO - orchestrator:227 - Analyzing item 2/3: (config) /etc/sysctl.d/10-bufferbloat.conf
+2025-06-02 18:48:36,438 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-bufferbloat.conf using model qwen2.5vl.
+2025-06-02 18:48:36,441 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:48:36,441 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-bufferbloat.conf.
+2025-06-02 18:48:36,441 - Orchestrator - INFO - orchestrator:227 - Analyzing item 3/3: (config) /etc/sysctl.d/10-console-messages.conf
+2025-06-02 18:48:36,441 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-console-messages.conf using model qwen2.5vl.
+2025-06-02 18:48:36,443 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:48:36,443 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-console-messages.conf.
+2025-06-02 18:48:36,443 - Orchestrator - INFO - orchestrator:240 - No system items were successfully analyzed by Ollama.
+2025-06-02 18:48:36,443 - Orchestrator - INFO - orchestrator:241 - --- Enhancement cycle ended (no analysis results) ---
+2025-06-02 18:48:36,450 - Orchestrator - WARNING - orchestrator:159 - Monitored service 'cron' is NOT active/running. Status: inactive
+2025-06-02 18:48:36,456 - Orchestrator - WARNING - orchestrator:166 - System stability score reduced to 79.00 due to service issues.
+2025-06-02 18:48:36,456 - Orchestrator - INFO - orchestrator:177 - Current system stability score: 79.00
+2025-06-02 18:48:36,456 - Orchestrator - INFO - orchestrator:445 - Cycle #1 finished. Next cycle in 30s.
+2025-06-02 18:49:06,487 - Orchestrator - INFO - orchestrator:414 - ====== Starting Orchestrator Cycle #2 (Stability: 79.00) ======
+2025-06-02 18:49:06,487 - Orchestrator - INFO - orchestrator:202 - --- Starting new enhancement cycle ---
+2025-06-02 18:49:06,487 - Orchestrator - INFO - orchestrator:204 - Phase 1: Analyzing System State...
+2025-06-02 18:49:06,491 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/getty.target.wants
+2025-06-02 18:49:06,491 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/getty.target.wants
+2025-06-02 18:49:06,491 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:49:06,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:49:06,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sockets.target.wants
+2025-06-02 18:49:06,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sockets.target.wants
+2025-06-02 18:49:06,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.requires
+2025-06-02 18:49:06,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.requires
+2025-06-02 18:49:06,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.wants
+2025-06-02 18:49:06,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.wants
+2025-06-02 18:49:06,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:49:06,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:49:06,492 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/timers.target.wants
+2025-06-02 18:49:06,492 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/timers.target.wants
+2025-06-02 18:49:06,493 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:06,493 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:06,493 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/sockets.target.wants
+2025-06-02 18:49:06,493 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/sockets.target.wants
+2025-06-02 18:49:06,493 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/timers.target.wants
+2025-06-02 18:49:06,493 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/timers.target.wants
+2025-06-02 18:49:06,494 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:49:06,494 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:49:06,494 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:49:06,494 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:49:06,496 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:49:06,496 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:49:06,496 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:49:06,496 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:49:06,496 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:49:06,496 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:49:06,497 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:49:06,497 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:49:06,497 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:49:06,497 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:49:06,497 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:49:06,497 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:49:06,498 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:49:06,498 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:49:06,499 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:49:06,499 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:49:06,500 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:49:06,500 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:49:06,501 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:49:06,501 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:49:06,501 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sudo.service
+2025-06-02 18:49:06,502 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sudo.service
+2025-06-02 18:49:06,502 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:49:06,502 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:49:06,502 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-systemd
+2025-06-02 18:49:06,502 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-systemd
+2025-06-02 18:49:06,503 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:49:06,503 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:49:06,504 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:49:06,505 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:49:06,505 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:49:06,505 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:49:06,505 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:49:06,505 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:49:06,508 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:49:06,509 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:49:06,509 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:49:06,509 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:49:06,509 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:49:06,510 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:49:06,510 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:49:06,510 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:49:06,510 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:49:06,510 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:49:06,510 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:49:06,510 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:49:06,511 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:06,511 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:06,512 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:49:06,512 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:49:06,513 - SystemStateAnalyzer - ERROR - system_analyzer:175 - Permission denied reading file: /etc/shadow
+2025-06-02 18:49:06,513 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/shadow
+2025-06-02 18:49:06,514 - Orchestrator - INFO - orchestrator:224 - Analyzing up to 3 items sequentially (concurrency not implemented).
+2025-06-02 18:49:06,514 - Orchestrator - INFO - orchestrator:227 - Analyzing item 1/3: (config) /etc/sysctl.conf
+2025-06-02 18:49:06,514 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.conf using model qwen2.5vl.
+2025-06-02 18:49:06,516 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:49:06,516 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.conf.
+2025-06-02 18:49:06,516 - Orchestrator - INFO - orchestrator:227 - Analyzing item 2/3: (config) /etc/sysctl.d/10-bufferbloat.conf
+2025-06-02 18:49:06,516 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-bufferbloat.conf using model qwen2.5vl.
+2025-06-02 18:49:06,518 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:49:06,518 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-bufferbloat.conf.
+2025-06-02 18:49:06,518 - Orchestrator - INFO - orchestrator:227 - Analyzing item 3/3: (config) /etc/sysctl.d/10-console-messages.conf
+2025-06-02 18:49:06,518 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-console-messages.conf using model qwen2.5vl.
+2025-06-02 18:49:06,520 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:49:06,520 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-console-messages.conf.
+2025-06-02 18:49:06,520 - Orchestrator - INFO - orchestrator:240 - No system items were successfully analyzed by Ollama.
+2025-06-02 18:49:06,520 - Orchestrator - INFO - orchestrator:241 - --- Enhancement cycle ended (no analysis results) ---
+2025-06-02 18:49:06,527 - Orchestrator - WARNING - orchestrator:159 - Monitored service 'cron' is NOT active/running. Status: inactive
+2025-06-02 18:49:06,533 - Orchestrator - WARNING - orchestrator:166 - System stability score reduced to 58.00 due to service issues.
+2025-06-02 18:49:06,533 - Orchestrator - INFO - orchestrator:177 - Current system stability score: 58.00
+2025-06-02 18:49:06,533 - Orchestrator - INFO - orchestrator:445 - Cycle #2 finished. Next cycle in 30s.
+2025-06-02 18:49:36,563 - Orchestrator - INFO - orchestrator:414 - ====== Starting Orchestrator Cycle #3 (Stability: 58.00) ======
+2025-06-02 18:49:36,564 - Orchestrator - INFO - orchestrator:202 - --- Starting new enhancement cycle ---
+2025-06-02 18:49:36,564 - Orchestrator - INFO - orchestrator:204 - Phase 1: Analyzing System State...
+2025-06-02 18:49:36,568 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/getty.target.wants
+2025-06-02 18:49:36,568 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/getty.target.wants
+2025-06-02 18:49:36,568 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:49:36,568 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/multi-user.target.wants
+2025-06-02 18:49:36,568 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sockets.target.wants
+2025-06-02 18:49:36,568 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sockets.target.wants
+2025-06-02 18:49:36,568 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.requires
+2025-06-02 18:49:36,568 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.requires
+2025-06-02 18:49:36,568 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/ssh.service.wants
+2025-06-02 18:49:36,568 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/ssh.service.wants
+2025-06-02 18:49:36,569 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:49:36,569 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/sysinit.target.wants
+2025-06-02 18:49:36,569 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/system/timers.target.wants
+2025-06-02 18:49:36,569 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/system/timers.target.wants
+2025-06-02 18:49:36,569 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:36,569 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:36,569 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/sockets.target.wants
+2025-06-02 18:49:36,569 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/sockets.target.wants
+2025-06-02 18:49:36,569 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /etc/systemd/user/timers.target.wants
+2025-06-02 18:49:36,569 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/systemd/user/timers.target.wants
+2025-06-02 18:49:36,570 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:49:36,570 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks-early.service
+2025-06-02 18:49:36,570 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:49:36,570 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/cryptdisks.service
+2025-06-02 18:49:36,572 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:49:36,572 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/getty.target.wants
+2025-06-02 18:49:36,573 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:49:36,573 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/graphical.target.wants
+2025-06-02 18:49:36,573 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:49:36,573 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/hwclock.service
+2025-06-02 18:49:36,573 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:49:36,573 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-device.target.wants
+2025-06-02 18:49:36,573 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:49:36,574 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd-root-fs.target.wants
+2025-06-02 18:49:36,574 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:49:36,574 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/initrd.target.wants
+2025-06-02 18:49:36,575 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:49:36,575 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/multi-user.target.wants
+2025-06-02 18:49:36,576 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:49:36,576 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rc-local.service.d
+2025-06-02 18:49:36,577 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:49:36,577 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/rescue.target.wants
+2025-06-02 18:49:36,577 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:49:36,577 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sockets.target.wants
+2025-06-02 18:49:36,578 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sudo.service
+2025-06-02 18:49:36,578 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sudo.service
+2025-06-02 18:49:36,578 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:49:36,579 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/sysinit.target.wants
+2025-06-02 18:49:36,579 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-systemd
+2025-06-02 18:49:36,579 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-systemd
+2025-06-02 18:49:36,579 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:49:36,579 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/system-update.target.wants
+2025-06-02 18:49:36,581 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:49:36,581 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-journald.service.d
+2025-06-02 18:49:36,581 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:49:36,581 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-localed.service.d
+2025-06-02 18:49:36,582 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:49:36,582 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-logind.service.d
+2025-06-02 18:49:36,585 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:49:36,585 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/systemd-udevd.service.d
+2025-06-02 18:49:36,585 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:49:36,585 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/timers.target.wants
+2025-06-02 18:49:36,586 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:49:36,586 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user-.slice.d
+2025-06-02 18:49:36,586 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:49:36,586 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@.service.d
+2025-06-02 18:49:36,586 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:49:36,586 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/user@0.service.d
+2025-06-02 18:49:36,586 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:49:36,587 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/system/x11-common.service
+2025-06-02 18:49:36,588 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:36,588 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/graphical-session-pre.target.wants
+2025-06-02 18:49:36,588 - SystemStateAnalyzer - WARNING - system_analyzer:168 - File not found or not a regular file: /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:49:36,589 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /usr/lib/systemd/user/sockets.target.wants
+2025-06-02 18:49:36,589 - SystemStateAnalyzer - ERROR - system_analyzer:175 - Permission denied reading file: /etc/shadow
+2025-06-02 18:49:36,589 - Orchestrator - WARNING - orchestrator:190 - Could not read content for config at /etc/shadow
+2025-06-02 18:49:36,590 - Orchestrator - INFO - orchestrator:224 - Analyzing up to 3 items sequentially (concurrency not implemented).
+2025-06-02 18:49:36,590 - Orchestrator - INFO - orchestrator:227 - Analyzing item 1/3: (config) /etc/sysctl.conf
+2025-06-02 18:49:36,590 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.conf using model qwen2.5vl.
+2025-06-02 18:49:36,592 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:49:36,592 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.conf.
+2025-06-02 18:49:36,592 - Orchestrator - INFO - orchestrator:227 - Analyzing item 2/3: (config) /etc/sysctl.d/10-bufferbloat.conf
+2025-06-02 18:49:36,592 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-bufferbloat.conf using model qwen2.5vl.
+2025-06-02 18:49:36,594 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:49:36,594 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-bufferbloat.conf.
+2025-06-02 18:49:36,594 - Orchestrator - INFO - orchestrator:227 - Analyzing item 3/3: (config) /etc/sysctl.d/10-console-messages.conf
+2025-06-02 18:49:36,594 - OllamaInterface - INFO - ollama_interface:169 - Requesting analysis for config at /etc/sysctl.d/10-console-messages.conf using model qwen2.5vl.
+2025-06-02 18:49:36,596 - OllamaInterface - ERROR - ollama_interface:107 - Connection error with Ollama API at http://localhost:11434/api/generate. Is Ollama running and accessible?
+2025-06-02 18:49:36,596 - Orchestrator - WARNING - orchestrator:236 - Failed to get analysis from Ollama for /etc/sysctl.d/10-console-messages.conf.
+2025-06-02 18:49:36,596 - Orchestrator - INFO - orchestrator:240 - No system items were successfully analyzed by Ollama.
+2025-06-02 18:49:36,596 - Orchestrator - INFO - orchestrator:241 - --- Enhancement cycle ended (no analysis results) ---
+2025-06-02 18:49:36,604 - Orchestrator - WARNING - orchestrator:159 - Monitored service 'cron' is NOT active/running. Status: inactive
+2025-06-02 18:49:36,610 - Orchestrator - WARNING - orchestrator:166 - System stability score reduced to 37.00 due to service issues.
+2025-06-02 18:49:36,610 - Orchestrator - CRITICAL - orchestrator:173 - System stability critically low (37.00)!
+2025-06-02 18:49:36,610 - Orchestrator - CRITICAL - orchestrator:48 - USER_ALERT (CRITICAL): System stability critically low (37.00)!
+2025-06-02 18:49:36,610 - Orchestrator - INFO - orchestrator:177 - Current system stability score: 37.00
+2025-06-02 18:49:36,610 - Orchestrator - CRITICAL - orchestrator:48 - USER_ALERT (CRITICAL): System requires human intervention. Pausing autonomous operations.
+2025-06-02 18:49:36,611 - Orchestrator - INFO - orchestrator:439 - Orchestrator stopped by user (Ctrl+C or EOF) during human intervention pause.
+2025-06-02 18:49:36,611 - Orchestrator - INFO - orchestrator:454 - AI OS Enhancer shutting down.

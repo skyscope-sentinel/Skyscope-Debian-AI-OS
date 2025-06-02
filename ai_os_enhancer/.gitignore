@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.so
+*.egg
+pip-wheel-metadata/
+.Python
+venv/
+env/
+ENV/
+.env
+*.cfg # For config files that might contain secrets, though config.py is versioned
+# Consider adding data/db/* if logs/backups should not be versioned,
+# but for this project, having the structure might be okay, or empty .gitkeep files.
+# For now, let's not ignore data/db/* contents explicitly, assuming .gitkeep is used for dirs.
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs (if not in data/db or if specific log files are generated elsewhere)
+# *.log (This is too general if we want to keep ai_os_enhancer.log as an example,
+# but specific log files outside data/db might be added here)
+
+# Test outputs
+htmlcov/
+.tox/
+.coverage
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+pytestdebug.log
+
+# Security - if any sensitive files are ever temporarily created outside versioned config
+# credentials.*
+# *.key
+# *.pem
+# secrets.*
