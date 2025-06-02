@@ -1,0 +1,6 @@
+# Network related keywords and configurations guide placeholder.
+# This file can be populated with specific guidance for network configurations,
+# common commands, best practices, and troubleshooting tips for Debian systems.
+# For example, content related to /etc/network/interfaces, systemd-networkd,
+# nmcli, ip command, ss, netstat, firewalld, ufw, etc.
+# Keywords: network, interfaces, ip, subnet, gateway, dns, dhcp, wifi, ethernet, firewall
