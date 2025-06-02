@@ -1,0 +1,69 @@
+# Debian sysctl.conf Configuration Guide (Pilot Knowledge Base)
+
+## Overview
+# The /etc/sysctl.conf file and files in /etc/sysctl.d/ are used to configure kernel parameters at runtime.
+# These settings can affect system performance, security, and network behavior.
+# Incorrect settings can lead to instability or security issues. Changes should be tested carefully.
+# Use `sysctl -p` to apply settings from /etc/sysctl.conf.
+# Individual parameters can be set with `sysctl -w parameter=value`.
+
+## Key Areas and Common Parameters:
+
+### 1. Network Security / Hardening:
+# * TCP SYN Cookies: Helps protect against SYN flood attacks.
+#   `net.ipv4.tcp_syncookies = 1` (Recommended: 1)
+# * IP Spoofing Protection (Reverse Path Filtering):
+#   `net.ipv4.conf.all.rp_filter = 1` (Recommended: 1 for strict, 2 for loose)
+#   `net.ipv4.conf.default.rp_filter = 1`
+# * Ignore ICMP Broadcasts: Prevents "smurf" attacks.
+#   `net.ipv4.icmp_echo_ignore_broadcasts = 1` (Recommended: 1)
+# * Ignore Bogus ICMP Responses:
+#   `net.ipv4.icmp_ignore_bogus_error_responses = 1` (Recommended: 1)
+# * Log Martian Packets (packets with impossible source addresses):
+#   `net.ipv4.conf.all.log_martians = 1` (Recommended: 1, for logging suspicious traffic)
+#   `net.ipv4.conf.default.log_martians = 1`
+# * Disable ICMP Redirect Acceptance: Mitigates man-in-the-middle attacks.
+#   `net.ipv4.conf.all.accept_redirects = 0` (Recommended: 0)
+#   `net.ipv4.conf.default.accept_redirects = 0`
+#   `net.ipv6.conf.all.accept_redirects = 0` (For IPv6)
+#   `net.ipv6.conf.default.accept_redirects = 0`
+# * Disable Secure ICMP Redirect Acceptance:
+#   `net.ipv4.conf.all.secure_redirects = 0` (Recommended: 0)
+#   `net.ipv4.conf.default.secure_redirects = 0`
+
+### 2. Performance Tuning (Use with caution, depends on workload):
+# * VM Swappiness: Defines how aggressively the kernel swaps memory pages.
+#   `vm.swappiness = 60` (Default. Lower values like 10-30 reduce swapping, good for desktops/some servers. 0 is not recommended for most cases unless specific need.)
+# * VM Overcommit Memory: Controls memory allocation behavior.
+#   `vm.overcommit_memory = 0` (Default. 0: heuristic, 1: always allow, 2: deny when total available > commit limit)
+#   `vm.overcommit_ratio = 50` (Percentage of RAM to use for commit limit if overcommit_memory=2)
+# * Max File Handles (System-wide):
+#   `fs.file-max = 100000` (Example, default is often lower. Increase if "too many open files" errors occur for many users/services.)
+# * TCP Buffers (Advanced - adjust based on network conditions and server load):
+#   `net.core.rmem_max = 16777216`
+#   `net.core.wmem_max = 16777216`
+#   `net.ipv4.tcp_rmem = 4096 87380 16777216` (min, default, max)
+#   `net.ipv4.tcp_wmem = 4096 65536 16777216` (min, default, max)
+# * Max TCP Listen Queue (Backlog):
+#   `net.core.somaxconn = 65535` (Example, for high-traffic servers. Application also needs to support it.)
+# * TCP Keepalive Time:
+#   `net.ipv4.tcp_keepalive_time = 7200` (Default is 2 hours. Can be reduced for faster detection of dead connections, e.g., 1800 for 30 mins)
+
+### 3. Kernel Security / Miscellaneous:
+# * Kernel ASLR (Address Space Layout Randomization):
+#   `kernel.randomize_va_space = 2` (Recommended: 2 for full randomization)
+# * Restrict dmesg access to root:
+#   `kernel.dmesg_restrict = 1` (Recommended: 1)
+# * Magic SysRq Key (Enable for debugging, disable for production if physical access is a concern):
+#   `kernel.sysrq = 0` (0: disable, 1: enable all, or bitmask for specific functions)
+# * Prevent TCP Time-Wait Assassination:
+#   `net.ipv4.tcp_rfc1337 = 1` (Recommended: 1)
+
+## Important Considerations for AI Analysis:
+# 1. Context is Key: Recommendations depend on the server's role (web server, database, desktop).
+# 2. Incremental Changes: Apply and test one related group of changes at a time.
+# 3. Justification: Any suggested change must have a clear justification related to security, performance, or stability.
+# 4. Existing Values: Note the current value before suggesting a change. Only suggest if the new value is demonstrably better or safer for a typical Debian system or the inferred role.
+# 5. Comments: Preserve existing comments. New settings should also be commented.
+# 6. Syntax: Ensure `parameter = value` syntax. Blank lines and lines starting with '#' or ';' are ignored.
+# 7. Deprecation: Be aware that some sysctls can be deprecated or behave differently across kernel versions. The target is Debian 13 (Trixie).
