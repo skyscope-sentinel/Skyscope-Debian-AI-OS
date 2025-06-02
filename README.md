@@ -1,6 +1,6 @@
-# Skyscope Sentinel Intelligence
+### Skyscope Sentinel Intelligence
 # AI-Driven OS Enhancer for Debian
-# Developer Casey Jay Topojani
+### Developer Casey Jay Topojani
 
 
 ## Overview
