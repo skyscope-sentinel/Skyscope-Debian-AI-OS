@@ -46,31 +46,20 @@ This project translates a detailed pseudo code specification into a functional P
 *   **Docker (Optional):** If you intend to use the "DOCKER" `sandbox_level` for executing AI-generated scripts in a containerized environment, Docker must be installed and running. The user executing the AI OS Enhancer application will need appropriate permissions to interact with the Docker daemon (e.g., by being a member of the `docker` group). If Docker is not available or not used, script execution will fall back to direct execution with associated risks.
 
 ## Setup and Installation
-
-	@@ -89,6 +90,12 @@ Before running, review and customize `ai_os_enhancer/config.py`:
-        str(PROJECT_ROOT / "sample_scripts" / "local_test_script.sh") # For scripts within the project
-    ]
-    ```
-*   **`AIOS_GITHUB_API_KEY`** (Optional): For features that interact with the GitHub API (planned for future development phases), you'll need to provide a GitHub Personal Access Token with appropriate permissions.
+  
+*   **`GITHUB_API_KEY`** (Optional): For features that interact with the GitHub API (planned for future development phases), you'll need to provide a GitHub Personal Access Token with appropriate permissions.
     Set this environment variable before running the application:
-    ```bash
-    export AIOS_GITHUB_API_KEY="ghp_YourGitHubPersonalAccessTokenHere"
-    ```
+    `
+    export GITHUB_API_KEY="ghp_YourGitHubPersonalAccessTokenHere"
+   `
     For persistence, you can add this line to your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`). The application will function without this key, but GitHub-related capabilities will be disabled. Ensure the key has the necessary scopes (e.g., `public_repo` for reading public repositories, or more depending on planned features).
 
 ## How to Run
 
-You can run the application as a Python module from the project's root directory (the one containing the `ai_os_enhancer` folder):
-
-```bash
+You can run the application as a Python module from the project's root directory from `https://github.com/skyscope-sentinel/Skyscope-Debian-AI-OS`
+`
 python -m ai_os_enhancer.main
-```
-
-Alternatively, depending on your `PYTHONPATH` setup, you might be able to run:
-
-```bash
-python ai_os_enhancer/main.py
-```
+`
 
 The application will start, initialize, and begin its enhancement cycles. Follow the console output for logs and any prompts for human approval.
 
