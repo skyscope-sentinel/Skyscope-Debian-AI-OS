@@ -17,8 +17,9 @@ OLLAMA_API_ENDPOINT = os.environ.get("AIOS_OLLAMA_API_ENDPOINT", "http://localho
 DEFAULT_MODEL = os.environ.get("AIOS_DEFAULT_MODEL", "qwen2.5vl")
 
 # Project Paths
-# PROJECT_ROOT: Absolute path to the project's root directory.
-PROJECT_ROOT = pathlib.Path(__file__).parent.resolve()
+# Assuming this file (config.py) is in a subdirectory (e.g., 'ai_os_enhancer'),
+# PROJECT_ROOT should point to the actual repository root, which is one level up.
+PROJECT_ROOT = pathlib.Path(__file__).parent.parent.resolve()
 # CONFIG_DATABASE_PATH: Path to the directory where configuration and database files are stored.
 CONFIG_DATABASE_PATH = PROJECT_ROOT / "data" / "db"
 # LOG_FILE_PATH: Path to the log file for the application.
