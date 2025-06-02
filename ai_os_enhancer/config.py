@@ -89,8 +89,11 @@ GITHUB_API_KEY = os.environ.get("AIOS_GITHUB_API_KEY")
 if __name__ == '__main__':
     # For testing the paths
     print(f"Project Root: {PROJECT_ROOT}")
-	@@ -43,3 +47,4 @@
+    # print(f"Config File Path: {pathlib.Path(__file__)}") # Path to this config file itself
+    print(f"Config Database Path: {CONFIG_DATABASE_PATH}")
+    print(f"Log File Path: {LOG_FILE_PATH}")
     print(f"Backup Base Path: {BACKUP_BASE_PATH}")
+    print(f"Ollama API Endpoint: {OLLAMA_API_ENDPOINT}")
     print(f"Default Model: {DEFAULT_MODEL}")
     print(f"Human Approval Threshold: {HUMAN_APPROVAL_THRESHOLD}")
     print(f"Min Stability for Enhancement: {MIN_STABILITY_FOR_ENHANCEMENT}")
