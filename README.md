@@ -1,6 +1,6 @@
-### Skyscope Sentinel Intelligence
+Skyscope Sentinel Intelligence presents
 # AI-Driven OS Enhancer for Debian
-### Developer Casey Jay Topojani
+Developer Casey Jay Topojani
 
 
 ## Overview
@@ -35,62 +35,28 @@ This project translates a detailed pseudo code specification into a functional P
     *   Includes basic syntax checking for Bash script modifications.
     *   Can create new files (e.g., new scripts).
 *   **Rollback:** Can restore files from backups if an operation fails or leads to instability.
-*   **Command Execution:** Can execute system commands and AI-generated scripts (currently **without full sandboxing** - see warnings).
+*   **Command Execution:** Can execute system commands and AI-generated scripts. Supports direct execution (with strong warnings about risks) or containerized execution via Docker (if Docker is available and the "DOCKER" sandbox level is selected) for enhanced isolation of script execution.
 *   **Orchestration:** Manages the cycle of analysis, planning, approval, application, and monitoring.
 *   **Human Approval Workflow:** Prompts for human confirmation for changes based on configurable risk/impact thresholds.
 *   **Basic System Health Monitoring:** Includes a rudimentary system stability score and can trigger human intervention alerts.
-*   **Configurable:** Key parameters like Ollama endpoint, model name, monitored paths, and approval thresholds are configurable.
-*   **Logging:** Detailed logging of operations to `data/db/logs/ai_os_enhancer.log`.
-
-## Prerequisites
-
-*   **Python:** Python 3.8 or newer recommended.
-*   **Ollama:** A running Ollama instance.
-    *   You must have pulled the LLM model specified in `ai_os_enhancer/config.py` (default is `qwen2.5vl`, as per the original issue request). You can pull models using `ollama pull <model_name>`.
+	@@ -47,6 +47,7 @@ This project translates a detailed pseudo code specification into a functional P
     *   Ensure the Ollama API endpoint (`http://localhost:11434` by default) is accessible from where you run the application.
 *   **Debian-based System:** The system analysis tools (`lsb_release`, `dpkg-query`, `systemctl`) are designed for Debian-based systems (e.g., Debian, Ubuntu).
 *   **Pip:** For installing Python package dependencies.
+*   **Docker (Optional):** If you intend to use the "DOCKER" `sandbox_level` for executing AI-generated scripts in a containerized environment, Docker must be installed and running. The user executing the AI OS Enhancer application will need appropriate permissions to interact with the Docker daemon (e.g., by being a member of the `docker` group). If Docker is not available or not used, script execution will fall back to direct execution with associated risks.
 
 ## Setup and Installation
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://https://github.com/skyscope-sentinel/Skyscope-Debian-AI-OS.git
-    cd ai-os-enhancer 
-    ```
-
-2.  **Create a virtual environment (recommended):**
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-3.  **Install dependencies:**
-    The primary external Python dependency is `requests`.
-    ```bash
-    pip install requests
-    ```
-    (If other dependencies are added later, they should be included in a `requirements.txt` file.)
-
-## Configuration
-
-Before running, review and customize `ai_os_enhancer/config.py`:
-
-*   **`OLLAMA_API_ENDPOINT`**: Ensure this points to your Ollama API.
-*   **`DEFAULT_MODEL`**: Set this to the Ollama model you have pulled and wish to use (e.g., `qwen2.5vl`).
-*   **`CONFIG_DATABASE_PATH`**: Defines where logs and backups are stored (defaults to `ai_os_enhancer/data/db`).
-*   **`HUMAN_APPROVAL_THRESHOLD`**: Adjust the sensitivity for requiring human approval ("LOW", "MEDIUM", "HIGH").
-    *   `LOW`: All changes require approval.
-    *   `MEDIUM`: Medium/High risk or Significant impact changes require approval.
-    *   `HIGH`: Only High risk or Significant impact changes require approval.
-*   **`MONITORED_SCRIPTS_PATHS`**: **Crucial step!** This is an empty list by default. You **must** populate this list with absolute paths to any scripts you want the AI to analyze and potentially modify.
-    Example:
-    ```python
-    MONITORED_SCRIPTS_PATHS = [
-        "/home/user/myscripts/backup_script.sh",
+	@@ -89,6 +90,12 @@ Before running, review and customize `ai_os_enhancer/config.py`:
         str(PROJECT_ROOT / "sample_scripts" / "local_test_script.sh") # For scripts within the project
     ]
     ```
+*   **`AIOS_GITHUB_API_KEY`** (Optional): For features that interact with the GitHub API (planned for future development phases), you'll need to provide a GitHub Personal Access Token with appropriate permissions.
+    Set this environment variable before running the application:
+    ```bash
+    export AIOS_GITHUB_API_KEY="ghp_YourGitHubPersonalAccessTokenHere"
+    ```
+    For persistence, you can add this line to your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`). The application will function without this key, but GitHub-related capabilities will be disabled. Ensure the key has the necessary scopes (e.g., `public_repo` for reading public repositories, or more depending on planned features).
 
 ## How to Run
 
