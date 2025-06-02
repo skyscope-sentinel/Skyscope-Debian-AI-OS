@@ -32,7 +32,7 @@ This project translates a detailed pseudo code specification into a functional P
     *   Backs up files before modification.
     *   Applies text-based changes to configuration files.
     *   Applies modifications to scripts (currently supports basic operations like full replacement, append/prepend, and simple regex-based function replacement for Bash).
-    *   Includes basic syntax checking for Bash script modifications.
+    *   Includes syntax checking for Bash scripts (using `bash -n`) and Python scripts (using `python -m py_compile`). If a syntax error is detected after a modification, the change is automatically rolled back.
     *   Can create new files (e.g., new scripts).
 *   **Rollback:** Can restore files from backups if an operation fails or leads to instability.
 *   **Command Execution:** Can execute system commands and AI-generated scripts. Supports direct execution (with strong warnings about risks) or containerized execution via Docker (if Docker is available and the "DOCKER" sandbox level is selected) for enhanced isolation of script execution.
@@ -53,6 +53,22 @@ This project translates a detailed pseudo code specification into a functional P
     export GITHUB_API_KEY="ghp_YourGitHubPersonalAccessTokenHere"
    `
     For persistence, you can add this line to your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`). The application will function without this key, but GitHub-related capabilities will be disabled. Ensure the key has the necessary scopes (e.g., `public_repo` for reading public repositories, or more depending on planned features).
+
+*   **`AIOS_OLLAMA_API_ENDPOINT`** (Optional): Overrides the default Ollama API endpoint.
+    *   If not set, defaults to: `"http://localhost:11434/api/generate"`
+    *   Example: `export AIOS_OLLAMA_API_ENDPOINT="http://my-ollama-server:11434/api/generate"`
+
+*   **`AIOS_DEFAULT_MODEL`** (Optional): Overrides the default Ollama model used for analysis and generation.
+    *   If not set, defaults to: `"qwen2.5vl"` (or as specified in `config.py`)
+    *   Example: `export AIOS_DEFAULT_MODEL="llama3"`
+
+*   **`AIOS_HUMAN_APPROVAL_THRESHOLD`** (Optional): Defines the minimum severity level that requires human approval for applying changes.
+    *   Valid values: `"LOW"`, `"MEDIUM"`, `"HIGH"`.
+    *   If not set, defaults to: `"HIGH"` (meaning only high-risk/impact changes require approval, or medium risk with significant impact).
+    *   `LOW`: Almost all changes require approval.
+    *   `MEDIUM`: Medium and High risk/impact changes require approval.
+    *   `HIGH`: Only High risk changes (or Medium risk with Significant impact) require approval.
+    *   Example: `export AIOS_HUMAN_APPROVAL_THRESHOLD="MEDIUM"`
 
 ## How to Run
 
@@ -87,7 +103,7 @@ The Orchestrator module drives the core logic in a loop:
         *   The target file is backed up by `EnhancementApplier`.
         *   If the LLM plan indicates code/content needs to be generated (e.g., a new function body), `OllamaInterface` requests this from the LLM.
         *   `EnhancementApplier` attempts to apply the change (e.g., modify config text, patch script, create new file).
-        *   For Bash scripts, a syntax check (`bash -n`) is performed. If it fails, the change is automatically rolled back from the backup.
+        *   For Bash scripts, a syntax check (`bash -n`) is performed. For Python scripts, a syntax check (`python -m py_compile`) is performed. If a syntax check fails, the change is automatically rolled back from the backup.
 5.  **Monitoring:**
     *   `SystemStateAnalyzer` checks basic system health indicators.
     *   The system stability score is updated. If it drops critically low, human intervention is flagged.

@@ -198,7 +198,18 @@ def apply_script_modification(script_path_str, modification_details, ai_generate
                     syntax_check_passed = False
                 else:
                     logger.info(f"Bash script syntax check passed for {script_path_str}.")
-            # Add elif for python -m py_compile script_path_str etc. for other languages
+            elif language == "python":
+                # For Python, use py_compile to check syntax
+                # python -m py_compile <filename> exits with 0 on success, non-zero on error
+                syntax_check_result = execute_command_or_script(f"python -m py_compile {shlex.quote(script_path_str)}")
+                if not syntax_check_result["success"] or syntax_check_result["exit_code"] != 0:
+                    # py_compile prints errors to stderr
+                    error_detail = syntax_check_result['error'] if syntax_check_result['error'] else syntax_check_result['output']
+                    logger.error(f"Modified Python script {script_path_str} has syntax errors! Details: '{error_detail}'")
+                    syntax_check_passed = False
+                else:
+                    logger.info(f"Python script syntax check passed for {script_path_str}.")
+            # Add elif for other languages here if needed
             
             if not syntax_check_passed:
                 logger.error(f"Rolling back script {script_path_str} due to syntax errors.")
@@ -231,9 +242,9 @@ def execute_command_or_script(command_string, script_content=None, language=None
                    (f"{language} script (content provided)" if script_content else command_string))
     
     if sandbox_level != "NONE":
-        logger.critical("CRITICAL WARNING: True sandboxing is NOT IMPLEMENTED. Commands/scripts will run with application's privileges.")
-        if sandbox_level == "HIGH" and script_content:
-             logger.warning("High sandboxing requested for AI script, but not available. Proceeding with extreme caution.")
+        logger.critical("CRITICAL WARNING: True sandboxing is NOT IMPLEMENTED. Commands/scripts will run with the application's full privileges. Implementing effective sandboxing is complex, often requiring containerization (e.g., Docker), virtual machines, or advanced syscall filtering techniques to isolate processes. Without this, AI-generated or modified scripts could potentially perform unintended or harmful actions on the system. PROCEED WITH EXTREME CAUTION.")
+        if sandbox_level == "HIGH" and script_content: # This check remains relevant
+             logger.warning("High sandboxing specifically requested for AI-generated script content, but true isolation is not available. Proceeding with extreme caution and heightened awareness of potential risks.")
 
     exec_command_list = []
     temp_script_file = None
@@ -462,17 +473,46 @@ if __name__ == '__main__':
     logger.info(f"apply_script_modification (replace_bash_function 'my_function'): Success, content verified.")
 
     logger.info("\n--- Testing script modification with syntax error & rollback ---")
-    assert rollback_change(script_backup_path, str(dummy_script_path)), "Failed to rollback script for syntax error test."
-    logger.info(f"Rolled back script to V1 for syntax error test.")
+    assert rollback_change(script_backup_path, str(dummy_script_path)), "Failed to rollback script for bash syntax error test."
+    logger.info(f"Rolled back bash script to V1 for syntax error test.")
         
-    mod_details_syntax_error = {"type": "append_to_script", "language": "bash"}
-    code_with_syntax_error = "\necho 'Valid line before error'\nif then else fi # obvious syntax error"
-    success_syntax_error = apply_script_modification(str(dummy_script_path), mod_details_syntax_error, code_with_syntax_error, script_backup_path)
-    assert not success_syntax_error, "Script modification with syntax error should have failed."
-    content_after_failed_mod = system_analyzer.read_file_content(str(dummy_script_path))
-    assert content_after_failed_mod == script_content_v1, "Script content not rolled back after syntax error."
-    logger.info("apply_script_modification (with syntax error): Failed as expected, and content rolled back to original.")
+    mod_details_bash_syntax_error = {"type": "append_to_script", "language": "bash"}
+    bash_code_with_syntax_error = "\necho 'Valid line before error'\nif then else fi # obvious bash syntax error"
+    success_bash_syntax_error = apply_script_modification(str(dummy_script_path), mod_details_bash_syntax_error, bash_code_with_syntax_error, script_backup_path)
+    assert not success_bash_syntax_error, "Bash script modification with syntax error should have failed."
+    content_after_failed_bash_mod = system_analyzer.read_file_content(str(dummy_script_path))
+    assert content_after_failed_bash_mod == script_content_v1, "Bash script content not rolled back after syntax error."
+    logger.info("apply_script_modification (bash with syntax error): Failed as expected, and content rolled back to original.")
 
+    # --- Test Python Script Modification & Syntax Check ---
+    logger.info("\n--- Testing Python script modification with syntax error & rollback ---")
+    dummy_python_script_name = "test_python_script.py"
+    dummy_python_script_path = test_dir / dummy_python_script_name
+    python_script_v1_content = "#!/usr/bin/env python3\n\nprint('Original Python script version 1')\n\ndef main():\n    print('Python main original')\n\nif __name__ == '__main__':\n    main()\n"
+    _write_file_content(str(dummy_python_script_path), python_script_v1_content)
+    os.chmod(dummy_python_script_path, 0o755)
+    logger.info(f"Created dummy Python script: {dummy_python_script_path}")
+
+    python_script_backup_path = backup_file(str(dummy_python_script_path))
+    assert python_script_backup_path, "Backup for Python script failed."
+
+    mod_details_python_syntax_error = {"type": "append_to_script", "language": "python"}
+    python_code_with_syntax_error = "\nprint('Valid line')\ndef error_func(\n    print('Oops, indent error') # Syntax error here"
+    
+    success_python_syntax_error = apply_script_modification(str(dummy_python_script_path), mod_details_python_syntax_error, python_code_with_syntax_error, python_script_backup_path)
+    assert not success_python_syntax_error, "Python script modification with syntax error should have failed."
+    content_after_failed_python_mod = system_analyzer.read_file_content(str(dummy_python_script_path))
+    assert content_after_failed_python_mod == python_script_v1_content, "Python script content not rolled back after syntax error."
+    logger.info("apply_script_modification (python with syntax error): Failed as expected, and content rolled back.")
+
+    logger.info("\n--- Testing valid Python script modification ---")
+    mod_details_python_valid = {"type": "replace_entire_script", "language": "python"}
+    valid_python_content_v2 = "#!/usr/bin/env python3\nprint('Valid Python script version 2')\n"
+    success_python_valid_mod = apply_script_modification(str(dummy_python_script_path), mod_details_python_valid, valid_python_content_v2, python_script_backup_path)
+    assert success_python_valid_mod, "Valid Python script modification failed."
+    assert system_analyzer.read_file_content(str(dummy_python_script_path)) == valid_python_content_v2, "Valid Python script content not updated correctly."
+    logger.info("apply_script_modification (valid python): Success, content updated.")
+    # --- End of Python Script Test ---
 
     logger.info("\n--- Testing execute_command_or_script ---")
     exec_result_ls = execute_command_or_script(f"ls -a {shlex.quote(str(test_dir))}") # Use -a to see . and ..
