@@ -81,7 +81,7 @@ The application will start, initialize, and begin its enhancement cycles. Follow
 
 ## Logging
 
-*   Detailed logs are written to: `ai_os_enhancer/data/db/logs/ai_os_enhancer.log`
+*   Detailed logs are written to: `data/db/logs/ai_os_enhancer.log` (relative to the project root).
 *   Console output provides a summary of key actions and alerts. Log level for console and file can be adjusted in `ai_os_enhancer/logger_setup.py`.
 
 ## How It Works
