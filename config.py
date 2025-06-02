@@ -44,6 +44,28 @@ if _human_approval_threshold_env not in ["LOW", "MEDIUM", "HIGH"]:
 else:
     HUMAN_APPROVAL_THRESHOLD = _human_approval_threshold_env
 
+# MIN_STABILITY_FOR_ENHANCEMENT: Minimum system stability score required for the orchestrator to attempt new enhancements.
+# Can be overridden by environment variable AIOS_MIN_STABILITY_FOR_ENHANCEMENT.
+_min_stability_env = os.environ.get("AIOS_MIN_STABILITY_FOR_ENHANCEMENT")
+MIN_STABILITY_FOR_ENHANCEMENT = 60.0  # Default value
+if _min_stability_env:
+    try:
+        MIN_STABILITY_FOR_ENHANCEMENT = float(_min_stability_env)
+    except ValueError:
+        print(f"Warning: Invalid value for AIOS_MIN_STABILITY_FOR_ENHANCEMENT: '{_min_stability_env}'. Using default: {MIN_STABILITY_FOR_ENHANCEMENT}")
+        # Potentially log this warning as well if logger is available here
+
+# CYCLE_INTERVAL_SECONDS: The time in seconds the orchestrator waits before starting a new enhancement cycle.
+# Can be overridden by environment variable AIOS_CYCLE_INTERVAL_SECONDS.
+_cycle_interval_env = os.environ.get("AIOS_CYCLE_INTERVAL_SECONDS")
+CYCLE_INTERVAL_SECONDS = 300  # Default value (5 minutes)
+if _cycle_interval_env:
+    try:
+        CYCLE_INTERVAL_SECONDS = int(_cycle_interval_env)
+    except ValueError:
+        print(f"Warning: Invalid value for AIOS_CYCLE_INTERVAL_SECONDS: '{_cycle_interval_env}'. Using default: {CYCLE_INTERVAL_SECONDS}")
+        # Potentially log this warning
+
 # Monitored script paths - this should be customized by the user.
 # MONITORED_SCRIPTS_PATHS: A list of paths to scripts that the application should monitor.
 # For now, it's an empty list. Users should add paths to their actual scripts.
@@ -69,5 +91,8 @@ if __name__ == '__main__':
 	@@ -43,3 +47,4 @@
     print(f"Backup Base Path: {BACKUP_BASE_PATH}")
     print(f"Default Model: {DEFAULT_MODEL}")
+    print(f"Human Approval Threshold: {HUMAN_APPROVAL_THRESHOLD}")
+    print(f"Min Stability for Enhancement: {MIN_STABILITY_FOR_ENHANCEMENT}")
+    print(f"Cycle Interval Seconds: {CYCLE_INTERVAL_SECONDS}")
     print(f"Monitored Scripts: {MONITORED_SCRIPTS_PATHS}")
     print(f"GitHub API Key: {'Loaded' if GITHUB_API_KEY else 'Not set / Not found in environment variables'}")

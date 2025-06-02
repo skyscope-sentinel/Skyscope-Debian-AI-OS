@@ -613,6 +613,8 @@ if __name__ == '__main__':
     clilogger = logger_setup.setup_logger(main_logger_name, log_level=logging.DEBUG) # Use a distinct name
     
     clilogger.info("Starting Orchestrator directly...")
+    clilogger.info(f"Config - Min Stability for Enhancement: {config.MIN_STABILITY_FOR_ENHANCEMENT}")
+    clilogger.info(f"Config - Cycle Interval Seconds: {config.CYCLE_INTERVAL_SECONDS}")
     orchestrator_instance = Orchestrator()
     orchestrator_instance.run()
     clilogger.info("Orchestrator direct run finished.")
