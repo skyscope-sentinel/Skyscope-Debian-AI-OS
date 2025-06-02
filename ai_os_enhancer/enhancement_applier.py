@@ -31,6 +31,131 @@ else:
 
 # --- EnhancementApplier Module ---
 
+# Helper to check Docker availability
+_docker_available_cache = None # Cache the result
+
+def _is_docker_available():
+    """Checks if Docker is installed and the daemon is responsive."""
+    global _docker_available_cache
+    if _docker_available_cache is not None:
+        return _docker_available_cache
+
+    try:
+        process = subprocess.run(["docker", "--version"], capture_output=True, text=True, check=False, timeout=5)
+        if process.returncode == 0:
+            logger.info(f"Docker is available: {process.stdout.strip()}")
+            _docker_available_cache = True
+            return True
+        else:
+            logger.warning(f"Docker command '--version' failed (Code {process.returncode}): {process.stderr.strip()}")
+            _docker_available_cache = False
+            return False
+    except FileNotFoundError:
+        logger.warning("Docker command not found. Docker is not installed or not in PATH.")
+        _docker_available_cache = False
+        return False
+    except subprocess.TimeoutExpired:
+        logger.warning("Timeout when running 'docker --version'. Docker daemon might be unresponsive.")
+        _docker_available_cache = False
+        return False
+    except Exception as e:
+        logger.error(f"An unexpected error occurred while checking Docker availability: {e}", exc_info=True)
+        _docker_available_cache = False
+        return False
+
+def execute_in_docker_sandbox(script_content, language, docker_image_name="debian:stable-slim", timeout_seconds=60):
+    """
+    Executes a script within a Docker container for sandboxing.
+    Returns: Dictionary {success (bool), output (str), error (str), exit_code (int)}
+    """
+    logger.info(f"Attempting to execute {language} script in Docker sandbox using image {docker_image_name}.")
+
+    if not _is_docker_available():
+        error_msg = "Docker is not available or Docker command failed. Cannot execute in sandbox."
+        logger.error(error_msg)
+        return {"success": False, "output": "", "error": error_msg, "exit_code": -1}
+
+    temp_host_dir = None
+    try:
+        # 1. Create a temporary directory on the host
+        temp_host_dir = tempfile.mkdtemp(prefix="aios_sandbox_")
+        temp_host_dir_path = pathlib.Path(temp_host_dir)
+        logger.debug(f"Created temporary host directory for Docker sandbox: {temp_host_dir}")
+
+        # 2. Determine script filename and interpreter path inside Docker
+        script_filename = ""
+        interpreter_in_container = ""
+        if language.lower() == "bash":
+            script_filename = "script_to_run.sh"
+            interpreter_in_container = "/bin/bash"
+        elif language.lower() == "python":
+            script_filename = "script_to_run.py"
+            interpreter_in_container = "/usr/bin/python3" # Common in Debian images
+        else:
+            error_msg = f"Unsupported language for Docker execution: {language}"
+            logger.error(error_msg)
+            return {"success": False, "output": "", "error": error_msg, "exit_code": -1}
+
+        # 3. Write script_content to a file in the temporary directory
+        script_file_host_path = temp_host_dir_path / script_filename
+        with open(script_file_host_path, "w", encoding="utf-8") as f:
+            f.write(script_content)
+        os.chmod(script_file_host_path, 0o755) # Make it executable
+        logger.debug(f"Script written to host path: {script_file_host_path}")
+
+        # 4. Docker Command Construction
+        # Mount point inside the container
+        sandbox_mnt_path = "/sandbox_mnt"
+        script_path_in_container = f"{sandbox_mnt_path}/{script_filename}"
+
+        docker_command = [
+            "docker", "run",
+            "--rm",  # Automatically remove the container when it exits
+            "--network", "none", # Disable networking for added security by default
+            # Consider adding --read-only for the root filesystem of the container if image supports it well
+            # Consider resource limits: --memory, --cpus
+            "-v", f"{temp_host_dir_path}:{sandbox_mnt_path}", # Mount the temp dir
+            "-w", sandbox_mnt_path,  # Set working directory in container
+            docker_image_name,       # The image to use
+            interpreter_in_container, # Command to run
+            script_path_in_container  # Argument to the command (the script)
+        ]
+        
+        logger.info(f"Executing Docker command: {' '.join(shlex.quote(str(p)) for p in docker_command)}")
+
+        # 5. Execute Docker Command
+        process = subprocess.run(docker_command, capture_output=True, text=True, check=False, timeout=timeout_seconds)
+        
+        success = process.returncode == 0
+        output = process.stdout.strip() if process.stdout else ""
+        error_output = process.stderr.strip() if process.stderr else ""
+        
+        log_output = output[:200] + ('...' if len(output) > 200 else '')
+        log_error = error_output[:200] + ('...' if len(error_output) > 200 else '')
+
+        if output: logger.debug(f"Docker execution stdout: {log_output}")
+        if error_output: logger.warning(f"Docker execution stderr: {log_error}")
+        logger.info(f"Docker execution result: Success={success}, ExitCode={process.returncode} (from script inside Docker)")
+        
+        return {"success": success, "output": output, "error": error_output, "exit_code": process.returncode}
+
+    except subprocess.TimeoutExpired:
+        cmd_str = ' '.join(docker_command) if 'docker_command' in locals() else "Docker execution"
+        logger.error(f"Command timed out after {timeout_seconds}s: {cmd_str}")
+        return {"success": False, "output": "", "error": f"Docker execution timed out: {cmd_str}", "exit_code": -1}
+    except Exception as e:
+        logger.error(f"An error occurred during Docker execution: {e}", exc_info=True)
+        return {"success": False, "output": "", "error": str(e), "exit_code": -1}
+    finally:
+        # 6. Cleanup: Remove the temporary directory on the host
+        if temp_host_dir and os.path.exists(temp_host_dir):
+            try:
+                shutil.rmtree(temp_host_dir)
+                logger.debug(f"Successfully removed temporary host directory: {temp_host_dir}")
+            except Exception as e:
+                logger.error(f"Failed to remove temporary host directory {temp_host_dir}: {e}", exc_info=True)
+
+
 def backup_file(file_path_str):
     """
     Creates a backup of the given file.
@@ -227,13 +352,27 @@ def execute_command_or_script(command_string, script_content=None, language=None
     Executes a command or a script. Sandboxing is critical but placeholder.
     Returns: Dictionary {success (bool), output (str), error (str), exit_code (int)}
     """
-    logger.warning(f"Executing (Sandbox Level: {sandbox_level} - CURRENTLY NOT ENFORCED): " +
-                   (f"{language} script (content provided)" if script_content else command_string))
-    
-    if sandbox_level != "NONE":
-        logger.critical("CRITICAL WARNING: True sandboxing is NOT IMPLEMENTED. Commands/scripts will run with application's privileges.")
-        if sandbox_level == "HIGH" and script_content:
-             logger.warning("High sandboxing requested for AI script, but not available. Proceeding with extreme caution.")
+    log_command_str = command_string if command_string else f"{language} script (content provided)"
+    logger.info(f"Request to execute. Command: '{log_command_str}', Sandbox: {sandbox_level}")
+
+    if sandbox_level == "DOCKER" and script_content and language:
+        logger.info(f"Delegating execution of {language} script to Docker sandbox.")
+        # Assuming DOCKER_IMAGE is available in config or use a default
+        docker_image = getattr(config, 'DOCKER_SANDBOX_IMAGE', "debian:stable-slim")
+        return execute_in_docker_sandbox(script_content, language, docker_image_name=docker_image)
+
+    # Existing direct execution logic (with improved warnings)
+    if sandbox_level != "NONE" and sandbox_level != "DOCKER": # Only warn if not Docker and not explicitly NONE
+        logger.critical(f"CRITICAL WARNING: Sandbox level '{sandbox_level}' requested, but only 'DOCKER' provides containerization. "
+                        "Falling back to direct execution with application's privileges. THIS IS NOT SECURE FOR UNTRUSTED SCRIPTS.")
+    elif sandbox_level == "NONE":
+        logger.warning("Executing with sandbox_level='NONE'. Command will run with application's privileges.")
+    # If it was DOCKER but script_content or language was missing, it falls through here:
+    elif sandbox_level == "DOCKER" and (not script_content or not language):
+        logger.warning("Docker sandbox requested, but script content or language not provided. Falling back to direct execution of command_string if present.")
+        if not command_string: # No script content and no command string
+             return {"success": False, "output": "", "error": "Docker sandbox requested but no script content/language, and no command string to execute directly.", "exit_code": -1}
+
 
     exec_command_list = []
     temp_script_file = None

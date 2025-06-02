@@ -35,6 +35,10 @@ MONITORED_SCRIPTS_PATHS = [
 
 # Other constants can be added here as needed.
 
+# GitHub API Key (optional)
+GITHUB_API_KEY = os.environ.get("AIOS_GITHUB_API_KEY")
+
+
 if __name__ == '__main__':
     # For testing the paths
     print(f"Project Root: {PROJECT_ROOT}")
@@ -43,3 +47,4 @@ if __name__ == '__main__':
     print(f"Backup Base Path: {BACKUP_BASE_PATH}")
     print(f"Default Model: {DEFAULT_MODEL}")
     print(f"Monitored Scripts: {MONITORED_SCRIPTS_PATHS}")
+    print(f"GitHub API Key: {'Loaded' if GITHUB_API_KEY else 'Not set / Not found in environment variables'}")

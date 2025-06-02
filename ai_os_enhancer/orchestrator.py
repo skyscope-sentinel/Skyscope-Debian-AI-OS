@@ -4,6 +4,7 @@ import time
 import logging
 import json # For formatting text data if needed by OllamaInterface's helper
 import os # For getpid and makedirs in init
+import difflib # Added for diff generation
 
 # Relative imports for when this module is part of the package
 try:
@@ -14,13 +15,14 @@ try:
     from . import enhancement_applier
 except ImportError:
     # Fallback for direct execution (e.g., if __name__ == '__main__')
+    # This allows running orchestrator.py directly for some tests IF other modules are accessible
     import sys
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    import config
-    import logger_setup
-    import system_analyzer
-    import ollama_interface
-    import enhancement_applier
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # Add project root
+    from ai_os_enhancer import config
+    from ai_os_enhancer import logger_setup
+    from ai_os_enhancer import system_analyzer
+    from ai_os_enhancer import ollama_interface
+    from ai_os_enhancer import enhancement_applier
 
 # Initialize logger for this module
 if __name__ == '__main__' and not logging.getLogger(logger_setup.LOGGER_NAME if hasattr(logger_setup, 'LOGGER_NAME') else 'ai_os_enhancer_logger').hasHandlers():
@@ -48,12 +50,12 @@ class Orchestrator:
             logger.critical(log_message)
         elif level_upper == "WARNING":
             logger.warning(log_message)
-        elif level_upper == "ERROR": # Added ERROR level
+        elif level_upper == "ERROR": 
             logger.error(log_message)
-        else: # Default to INFO
+        else: 
             logger.info(log_message)
         
-        print(log_message) # Always print for CLI visibility
+        print(log_message) 
 
 
     def initialize_system(self):
@@ -98,10 +100,9 @@ class Orchestrator:
         risk = enhancement_proposal.get("risk_assessment", "MEDIUM").upper()
         impact = enhancement_proposal.get("impact_level", "MODERATE").upper()
         justification = enhancement_proposal.get("justification", "No justification provided.")
-        item_path = enhancement_proposal.get("item_path", "Unknown item")
+        item_path_str = enhancement_proposal.get("item_path", "Unknown item") # Renamed to avoid conflict
 
         needs_approval = False
-        # Ensure HUMAN_APPROVAL_THRESHOLD is uppercase for reliable comparison
         approval_threshold = str(config.HUMAN_APPROVAL_THRESHOLD).upper()
 
         if approval_threshold == "LOW":
@@ -110,38 +111,132 @@ class Orchestrator:
             if risk in ["MEDIUM", "HIGH"] or impact == "SIGNIFICANT":
                 needs_approval = True
         elif approval_threshold == "HIGH":
-            if risk == "HIGH" or (risk == "MEDIUM" and impact == "SIGNIFICANT"): # Adjusted HIGH slightly
+            if risk == "HIGH" or (risk == "MEDIUM" and impact == "SIGNIFICANT"):
                 needs_approval = True
         
         if needs_approval:
-            proposal_summary = f"Approval for '{item_path}'. Risk: {risk}, Impact: {impact}. Justification: {justification}"
+            proposal_summary = f"Approval for '{item_path_str}'. Risk: {risk}, Impact: {impact}. Justification: {justification}"
             self._log_user_alert(proposal_summary, "WARNING")
             try:
                 while True:
                     response = input("Approve this change? (yes/no/details): ").strip().lower()
                     if response == "yes":
-                        logger.info(f"Enhancement APPROVED by human: {item_path}")
+                        logger.info(f"Enhancement APPROVED by human: {item_path_str}")
                         return True
                     elif response == "no":
-                        logger.info(f"Enhancement REJECTED by human: {item_path}")
+                        logger.info(f"Enhancement REJECTED by human: {item_path_str}")
                         return False
                     elif response == "details":
-                        print("--- Enhancement Details ---")
+                        print("--- Enhancement Proposal JSON Details ---")
                         try:
                             print(json.dumps(enhancement_proposal, indent=2, sort_keys=True))
                         except Exception as e:
-                            print(f"Error formatting details: {e}\nRaw: {enhancement_proposal}")
-                        print("---------------------------")
+                            print(f"Error formatting JSON details: {e}\nRaw: {enhancement_proposal}")
+                        print("-------------------------------------")
+
+                        # Diff generation logic starts here
+                        proposed_details = enhancement_proposal.get("proposed_change_details", {})
+                        item_type = enhancement_proposal.get("item_type")
+                        requires_generation = proposed_details.get("requires_code_generation", False)
+                        change_type_local = proposed_details.get("type", "").lower() # Renamed to avoid conflict
+                        is_new_file_creation = "create_new" in change_type_local or "new_script_creation" in change_type_local
+
+                        if is_new_file_creation:
+                            print("\nThis proposal is for creating a new file. No diff against an existing file is applicable.")
+                            new_content_task_desc = proposed_details.get("task_description", "Content to be generated by AI.")
+                            print(f"Content will be: {new_content_task_desc}")
+                            if proposed_details.get("language"):
+                                print(f"Language: {proposed_details.get('language')}")
+
+                        elif requires_generation:
+                            print("\nThis proposal requires new code/content to be generated by the LLM.")
+                            print("A diff of the final proposed change against the current file is not yet available.")
+                            print(f"Task for LLM: {proposed_details.get('task_description', justification)}")
+                            current_snippet = enhancement_proposal.get("current_relevant_content_snippet")
+                            if current_snippet:
+                                print("\n--- Current Relevant Snippet ---")
+                                print(current_snippet)
+                                print("------------------------------")
+                        elif not item_path_str: # Check renamed item_path_str
+                            print("\nCannot generate diff: Item path is missing in the proposal.")
+                        else:
+                            current_content = system_analyzer.read_file_content(item_path_str)
+                            if current_content is None:
+                                print(f"\nCould not read current content of {item_path_str} to generate diff.")
+                            else:
+                                proposed_final_content = None
+                                pre_defined_content = proposed_details.get("new_code_snippet") or \
+                                                      proposed_details.get("new_content") or \
+                                                      proposed_details.get("new_line_content") or \
+                                                      proposed_details.get("block_content")
+
+                                if item_type == "config":
+                                    config_change_type = str(proposed_details.get("type", "")).lower() # Use a local var
+                                    old_snippet_marker = proposed_details.get("target_marker_or_snippet") or \
+                                                         proposed_details.get("target_pattern") or \
+                                                         proposed_details.get("target_line_pattern")
+
+                                    if "append" in config_change_type and pre_defined_content is not None:
+                                        proposed_final_content = current_content + ("\n" if current_content else "") + pre_defined_content
+                                    elif "prepend" in config_change_type and pre_defined_content is not None:
+                                        proposed_final_content = pre_defined_content + ("\n" if current_content else "") + current_content
+                                    elif ("overwrite" in config_change_type or "replace_entire" in config_change_type) and pre_defined_content is not None:
+                                        proposed_final_content = pre_defined_content
+                                    elif old_snippet_marker and pre_defined_content is not None and old_snippet_marker in current_content:
+                                        proposed_final_content = current_content.replace(old_snippet_marker, pre_defined_content, 1)
+                                    elif pre_defined_content is not None:
+                                         logger.warning(f"Diff display: Unclear config change type for {item_path_str} with pre-defined content and no clear markers. Assuming overwrite for diff purposes.")
+                                         proposed_final_content = pre_defined_content
+                                    else:
+                                        print(f"\nCould not determine proposed content for config diff from details: {proposed_details}")
+
+                                elif item_type == "script":
+                                    mod_type = proposed_details.get("type")
+                                    if mod_type == "replace_entire_script" and pre_defined_content is not None:
+                                        proposed_final_content = pre_defined_content
+                                    elif mod_type == "append_to_script" and pre_defined_content is not None:
+                                        proposed_final_content = current_content + ("\n" if current_content else "") + pre_defined_content
+                                    elif mod_type == "prepend_to_script" and pre_defined_content is not None:
+                                        proposed_final_content = pre_defined_content + ("\n" if current_content else "") + current_content
+                                    elif mod_type == "replace_bash_function" and proposed_details.get("function_name") and pre_defined_content:
+                                        print(f"\nProposed new code for function '{proposed_details.get('function_name')}':")
+                                        print("--- Proposed New Function Code ---")
+                                        print(pre_defined_content)
+                                        print("----------------------------------")
+                                        proposed_final_content = None 
+                                    else:
+                                         print(f"\nCould not determine proposed content for script diff from details: {proposed_details}")
+                                
+                                if proposed_final_content is not None:
+                                    print("\n--- Proposed Change Diff ---")
+                                    current_content_lines = current_content.splitlines(keepends=True)
+                                    proposed_content_lines = proposed_final_content.splitlines(keepends=True)
+                                    
+                                    diff_lines = list(difflib.unified_diff(
+                                        current_content_lines, proposed_content_lines,
+                                        fromfile=f"a/{item_path_str}", tofile=f"b/{item_path_str}", lineterm=""
+                                    ))
+                                    if diff_lines:
+                                        for line_diff_item in diff_lines: # Renamed loop variable
+                                            print(line_diff_item, end='') 
+                                        if diff_lines and not diff_lines[-1].endswith('\n'):
+                                            print()
+                                    else:
+                                        print("No textual changes proposed (or content is identical).")
+                                    print("--------------------------")
+                                elif not (item_type == "script" and proposed_details.get("type") == "replace_bash_function" and pre_defined_content):
+                                    print("\nCould not generate a diff for the proposed change with available details.")
+                        print("---------------------------") # End of details section
                     else:
                         print("Invalid input. Please enter 'yes', 'no', or 'details'.")
             except KeyboardInterrupt:
-                logger.warning(f"Approval process for '{item_path}' interrupted by user (Ctrl+C). Assuming rejection.")
+                logger.warning(f"Approval process for '{item_path_str}' interrupted by user (Ctrl+C). Assuming rejection.")
                 return False
-            except EOFError: # Handle if input stream closes (e.g. in automated non-interactive test)
-                logger.warning(f"EOFError during input for '{item_path}'. Assuming rejection in non-interactive mode.")
+            except EOFError: 
+                logger.warning(f"EOFError during input for '{item_path_str}'. Assuming rejection in non-interactive mode.")
                 return False
         else:
-            logger.info(f"Enhancement auto-approved (Risk: {risk}, Impact: {impact}) for '{item_path}'.")
+            logger.info(f"Enhancement auto-approved (Risk: {risk}, Impact: {impact}) for '{item_path_str}'.")
             return True
 
 
@@ -149,7 +244,6 @@ class Orchestrator:
         """ Placeholder for system health monitoring. """
         logger.debug("Monitoring system health (basic check)...")
         
-        # Example: Check a critical service (make this configurable)
         critical_services_to_check = getattr(config, 'CRITICAL_SERVICES_MONITOR', ["cron", "ssh"])
         current_stability_penalty = 0
 
@@ -164,7 +258,7 @@ class Orchestrator:
         if current_stability_penalty > 0:
             self.system_stability_score = max(0, self.system_stability_score - current_stability_penalty)
             logger.warning(f"System stability score reduced to {self.system_stability_score:.2f} due to service issues.")
-        elif self.system_stability_score < 100: # No new issues, and not at max
+        elif self.system_stability_score < 100: 
             self.system_stability_score = min(100, self.system_stability_score + 1) 
             logger.debug(f"System stability score slightly recovered to {self.system_stability_score:.2f}")
 
@@ -172,7 +266,7 @@ class Orchestrator:
             alert_msg = f"System stability critically low ({self.system_stability_score:.2f})!"
             logger.critical(alert_msg)
             self._log_user_alert(alert_msg, "CRITICAL")
-            self.human_intervention_required = True # This requires human to reset
+            self.human_intervention_required = True 
         
         logger.info(f"Current system stability score: {self.system_stability_score:.2f}")
         return self.system_stability_score
@@ -181,7 +275,7 @@ class Orchestrator:
     def _format_item_for_analysis(self, item_path_str, item_type):
         """ Helper to read item content and prepare for analysis. """
         item_content = system_analyzer.read_file_content(item_path_str)
-        if item_content is not None: # Check for None, as empty string is valid content
+        if item_content is not None: 
             return {
                 "path": item_path_str,
                 "content": item_content, 
@@ -207,12 +301,12 @@ class Orchestrator:
         analysis_tasks_queue = []
         for item_area in items_to_analyze_specs:
             area_type = item_area["type"]
-            for item_path_str in item_area["paths"]:
-                if system_analyzer.pathlib.Path(item_path_str).exists():
-                    analysis_task = self._format_item_for_analysis(item_path_str, area_type)
+            for path_str in item_area["paths"]: # Renamed to avoid conflict
+                if system_analyzer.pathlib.Path(path_str).exists():
+                    analysis_task = self._format_item_for_analysis(path_str, area_type)
                     if analysis_task: analysis_tasks_queue.append(analysis_task)
                 else:
-                    logger.debug(f"Path {item_path_str} from spec does not exist, skipping analysis.")
+                    logger.debug(f"Path {path_str} from spec does not exist, skipping analysis.")
         
         if not analysis_tasks_queue:
             logger.info("No existing items found to analyze in this cycle based on current configuration.")
@@ -223,7 +317,7 @@ class Orchestrator:
         max_analyses = config.MAX_CONCURRENT_ANALYSES if hasattr(config, 'MAX_CONCURRENT_ANALYSES') else 1
         logger.info(f"Analyzing up to {max_analyses} items sequentially (concurrency not implemented).")
         
-        for i, task in enumerate(analysis_tasks_queue[:max_analyses]): # Simple sequential for now
+        for i, task in enumerate(analysis_tasks_queue[:max_analyses]): 
             logger.info(f"Analyzing item {i+1}/{len(analysis_tasks_queue[:max_analyses])}: ({task['type']}) {task['path']}")
             ollama_analysis = ollama_interface.analyze_system_item(
                 item_content=task['content'], item_path=task['path'], item_type=task['type']
@@ -264,122 +358,124 @@ class Orchestrator:
                 self._log_user_alert("Halting further enhancements in this cycle due to prior critical issue or instability.", "WARNING")
                 break
 
-            item_path = enhancement.get("item_path")
-            item_type = enhancement.get("item_type") # 'config' or 'script'
-            proposed_details = enhancement.get("proposed_change_details", {})
-            change_type = str(proposed_details.get("type", "")).lower()
+            item_path_enh = enhancement.get("item_path") # Renamed to avoid conflict
+            item_type_enh = enhancement.get("item_type") 
+            proposed_details_enh = enhancement.get("proposed_change_details", {})
+            change_type_enh = str(proposed_details_enh.get("type", "")).lower()
             
-            log_msg_enh = f"Considering enhancement for '{item_path}' ({item_type}, type: {change_type}): {enhancement.get('justification', 'N/A')}"
-            logger.info(log_msg_enh)
+            log_msg_enh_cycle = f"Considering enhancement for '{item_path_enh}' ({item_type_enh}, type: {change_type_enh}): {enhancement.get('justification', 'N/A')}"
+            logger.info(log_msg_enh_cycle)
             logger.info(f"Risk: {enhancement.get('risk_assessment', 'N/A')}, Impact: {enhancement.get('impact_level', 'N/A')}")
-            logger.debug(f"Full proposed change details: {json.dumps(proposed_details, indent=2)}")
+            logger.debug(f"Full proposed change details: {json.dumps(proposed_details_enh, indent=2)}")
 
-            if not all([item_path, item_type, proposed_details, change_type]):
+            if not all([item_path_enh, item_type_enh, proposed_details_enh, change_type_enh]):
                 logger.error(f"Skipping enhancement due to missing critical fields. Details: {enhancement}")
                 self.system_stability_score = max(0, self.system_stability_score - 5)
                 continue
 
             if not self.request_human_approval_if_needed(enhancement):
-                logger.info(f"Enhancement skipped (human disapproval or non-interactive rejection): {item_path}")
+                logger.info(f"Enhancement skipped (human disapproval or non-interactive rejection): {item_path_enh}")
                 continue
             
-            is_new_file = "create_new" in change_type or "new_script_creation" in change_type
+            is_new_file = "create_new" in change_type_enh or "new_script_creation" in change_type_enh
             backup_file_path = None
             if not is_new_file:
-                if not system_analyzer.pathlib.Path(item_path).exists():
-                    logger.error(f"Target item '{item_path}' does not exist for modification. Skipping.")
+                if not system_analyzer.pathlib.Path(item_path_enh).exists():
+                    logger.error(f"Target item '{item_path_enh}' does not exist for modification. Skipping.")
                     self.system_stability_score = max(0, self.system_stability_score - 3)
                     continue
-                backup_file_path = enhancement_applier.backup_file(item_path)
+                backup_file_path = enhancement_applier.backup_file(item_path_enh)
                 if not backup_file_path:
-                    logger.error(f"Backup failed for '{item_path}'. Skipping enhancement.")
+                    logger.error(f"Backup failed for '{item_path_enh}'. Skipping enhancement.")
                     self.system_stability_score = max(0, self.system_stability_score - 10)
                     continue
             
             apply_success = False
             content_for_change = None
-            task_desc_for_llm = proposed_details.get('task_description', enhancement.get('justification', 'Apply system enhancement.'))
-            language_for_llm = proposed_details.get("language", "bash" if item_type == "script" else "text")
+            task_desc_for_llm = proposed_details_enh.get('task_description', enhancement.get('justification', 'Apply system enhancement.'))
+            language_for_llm = proposed_details_enh.get("language", "bash" if item_type_enh == "script" else "text")
 
-            if proposed_details.get("requires_code_generation", False):
-                logger.info(f"Requesting LLM to generate content for '{item_path}'. Task: {task_desc_for_llm}")
+            if proposed_details_enh.get("requires_code_generation", False):
+                logger.info(f"Requesting LLM to generate content for '{item_path_enh}'. Task: {task_desc_for_llm}")
                 content_for_change = ollama_interface.generate_code_or_modification(
                     task_description=task_desc_for_llm,
                     language=language_for_llm,
                     existing_code_context=enhancement.get("current_relevant_content_snippet"),
-                    modification_target_details=proposed_details 
+                    modification_target_details=proposed_details_enh 
                 )
                 if not content_for_change:
-                    logger.error(f"Failed to generate content from Ollama for: {item_path}")
+                    logger.error(f"Failed to generate content from Ollama for: {item_path_enh}")
                     self.system_stability_score = max(0, self.system_stability_score - 5)
                     continue 
-            else: # Content should be in proposed_details
+            else: 
                 content_keys = ["code_to_insert_or_replace", "new_code_snippet", "new_content", "new_line_content", "block_content"]
                 for key in content_keys:
-                    if key in proposed_details:
-                        content_for_change = proposed_details[key]
+                    if key in proposed_details_enh:
+                        content_for_change = proposed_details_enh[key]
                         break
-                if content_for_change is None and not is_new_file: # New file might generate content later
-                    logger.warning(f"No code generation requested, and no pre-defined content found in proposed_change_details for existing item '{item_path}'. Trying to proceed if change type allows.")
+                if content_for_change is None and not is_new_file: 
+                    logger.warning(f"No code generation requested, and no pre-defined content found in proposed_change_details for existing item '{item_path_enh}'.")
             
-            # Apply the change
             if is_new_file:
-                if content_for_change is None: # If not generated/provided earlier, generate now
-                     logger.info(f"Content for new file '{item_path}' not pre-defined, generating now.")
+                if content_for_change is None: 
+                     logger.info(f"Content for new file '{item_path_enh}' not pre-defined, generating now.")
                      content_for_change = ollama_interface.generate_code_or_modification(task_desc_for_llm, language_for_llm)
                 
                 if content_for_change is not None:
-                    make_executable = item_type == "script" # and language_for_llm in ["bash", "sh"]
-                    apply_success = enhancement_applier.create_new_file(item_path, content_for_change, make_executable)
+                    make_executable = item_type_enh == "script" 
+                    apply_success = enhancement_applier.create_new_file(item_path_enh, content_for_change, make_executable)
                 else:
-                    logger.error(f"Failed to obtain content for new {item_type}: {item_path}")
+                    logger.error(f"Failed to obtain content for new {item_type_enh}: {item_path_enh}")
             
-            elif item_type == "script":
+            elif item_type_enh == "script":
                 if content_for_change is not None:
-                    apply_success = enhancement_applier.apply_script_modification(item_path, proposed_details, content_for_change, backup_file_path)
+                    apply_success = enhancement_applier.apply_script_modification(item_path_enh, proposed_details_enh, content_for_change, backup_file_path)
                 else:
-                    logger.error(f"No content (generated or pre-defined) for script modification: {item_path}")
+                    logger.error(f"No content (generated or pre-defined) for script modification: {item_path_enh}")
             
-            elif item_type == "config":
-                old_snippet_keys = ["target_marker_or_snippet", "target_pattern", "target_line_pattern"]
-                old_snippet_val = next((proposed_details[k] for k in old_snippet_keys if k in proposed_details), None)
+            elif item_type_enh == "config":
+                old_snippet_keys_cfg = ["target_marker_or_snippet", "target_pattern", "target_line_pattern"] # Renamed
+                old_snippet_val_cfg = next((proposed_details_enh[k] for k in old_snippet_keys_cfg if k in proposed_details_enh), None) # Renamed
 
-                if "append" in change_type: old_snippet_val = "APPEND_MODE"
-                elif "prepend" in change_type: old_snippet_val = "PREPEND_MODE"
-                elif "overwrite" in change_type or "replace_entire" in change_type: old_snippet_val = "OVERWRITE_MODE"
+                # Handle special modes like APPEND_MODE, PREPEND_MODE, OVERWRITE_MODE if specified in proposed_details.type
+                config_change_type_apply = str(proposed_details_enh.get("type", "")).lower() # Renamed
+                if "append" in config_change_type_apply: old_snippet_val_cfg = "APPEND_MODE"
+                elif "prepend" in config_change_type_apply: old_snippet_val_cfg = "PREPEND_MODE"
+                elif "overwrite" in config_change_type_apply or "replace_entire" in config_change_type_apply : old_snippet_val_cfg = "OVERWRITE_MODE"
                 
-                if content_for_change is not None and old_snippet_val is not None:
-                    apply_success = enhancement_applier.apply_config_text_change(item_path, old_snippet_val, content_for_change, backup_file_path)
-                elif old_snippet_val is None:
-                     logger.error(f"Cannot apply config change to {item_path}: missing target snippet/pattern and not append/prepend/overwrite.")
-                else: # content_for_change is None
-                     logger.warning(f"Config change for {item_path} specified target but no new content; 'delete' type not fully supported.")
+                if content_for_change is not None and old_snippet_val_cfg is not None:
+                    apply_success = enhancement_applier.apply_config_text_change(
+                        item_path_enh, old_snippet_val_cfg, content_for_change, backup_file_path
+                    )
+                elif old_snippet_val_cfg is None:
+                     logger.error(f"Cannot apply config change to {item_path_enh}: missing target snippet/pattern and not append/prepend/overwrite.")
+                else: 
+                     logger.warning(f"Config change for {item_path_enh} specified target but no new content; 'delete' type not fully supported.")
             else:
-                logger.warning(f"Unknown enhancement item_type: {item_type} for path {item_path}")
+                logger.warning(f"Unknown enhancement item_type: {item_type_enh} for path {item_path_enh}")
 
-            # Post-Change
             if apply_success:
-                logger.info(f"Enhancement APPLIED successfully for: {item_path}")
+                logger.info(f"Enhancement APPLIED successfully for: {item_path_enh}")
                 self.system_stability_score = min(100, self.system_stability_score + 5)
             else:
-                logger.error(f"Failed to apply enhancement for: {item_path}")
+                logger.error(f"Failed to apply enhancement for: {item_path_enh}")
                 self.system_stability_score = max(0, self.system_stability_score - 15)
             
-            self.monitor_system_health() # Check health after each attempt
+            self.monitor_system_health() 
 
             if self.human_intervention_required:
-                self._log_user_alert(f"System instability after attempting change to {item_path}. Intervention needed.", "CRITICAL")
+                self._log_user_alert(f"System instability after attempting change to {item_path_enh}. Intervention needed.", "CRITICAL")
                 if not is_new_file and backup_file_path and system_analyzer.pathlib.Path(backup_file_path).exists():
-                    logger.info(f"Attempting general rollback for {item_path} due to instability.")
-                    if enhancement_applier.rollback_change(backup_file_path, item_path):
-                        logger.info(f"Successfully rolled back {item_path}.")
+                    logger.info(f"Attempting general rollback for {item_path_enh} due to instability.")
+                    if enhancement_applier.rollback_change(backup_file_path, item_path_enh):
+                        logger.info(f"Successfully rolled back {item_path_enh}.")
                         self.system_stability_score = max(0, self.system_stability_score - 20)
                     else:
-                        logger.critical(f"CRITICAL: Failed to rollback {item_path} despite instability!")
-                elif is_new_file and system_analyzer.pathlib.Path(item_path).exists(): # Cleanup created file
-                    logger.info(f"Attempting to delete newly created file {item_path} due to instability.")
-                    try: system_analyzer.pathlib.Path(item_path).unlink(); logger.info(f"Deleted {item_path}.")
-                    except Exception as e_del: logger.error(f"Failed to delete {item_path}: {e_del}")
+                        logger.critical(f"CRITICAL: Failed to rollback {item_path_enh} despite instability!")
+                elif is_new_file and system_analyzer.pathlib.Path(item_path_enh).exists(): 
+                    logger.info(f"Attempting to delete newly created file {item_path_enh} due to instability.")
+                    try: system_analyzer.pathlib.Path(item_path_enh).unlink(); logger.info(f"Deleted {item_path_enh}.")
+                    except Exception as e_del: logger.error(f"Failed to delete {item_path_enh}: {e_del}")
                 break 
 
         logger.info(f"--- Enhancement cycle completed. Current Stability: {self.system_stability_score:.2f} ---")
@@ -387,10 +483,9 @@ class Orchestrator:
 
     def run(self):
         """ Main execution loop for the Orchestrator. """
-        # Ensure logger_setup.setup_logger is called for the main run if not already configured.
-        global logger # To potentially re-assign if it's the basicConfig one
+        global logger 
         if not logger.hasHandlers() or isinstance(logger, logging.RootLogger) or logger.name == "Orchestrator_direct":
-            logger = logger_setup.setup_logger("Orchestrator", log_level=logging.INFO) # Default to INFO for run
+            logger = logger_setup.setup_logger("Orchestrator", log_level=logging.INFO) 
             logger.info("Orchestrator logger re-initialized for run.")
 
         logger.info(f"AI OS Enhancer starting up. PID: {os.getpid()}")
@@ -406,7 +501,6 @@ class Orchestrator:
 
         try:
             cycle_count = 0
-            # Use a very short cycle for testing if a specific environment variable is set
             is_test_run = os.getenv("AIOS_TEST_QUICK_CYCLE", "false").lower() == "true"
             
             while True:
@@ -454,30 +548,3 @@ class Orchestrator:
             logger.info("AI OS Enhancer shutting down.")
 
 if __name__ == '__main__':
-    # This allows running the orchestrator directly for testing.
-    sample_scripts_dir = config.PROJECT_ROOT / "sample_scripts_for_orchestrator"
-    os.makedirs(sample_scripts_dir, exist_ok=True)
-    test_script_path = sample_scripts_dir / "orchestrator_test_script.sh"
-    with open(test_script_path, "w") as f:
-        f.write("#!/bin/bash\n#This is a test script for the AI OS Enhancer.\necho 'Orchestrator test script running'\n# A small inefficiency for the AI to potentially find:\nfor i in 1 2 3 4 5; do\n    echo \"Loop iteration: $i\"\n    sleep 0.1 # Simulate work\ndone\n\necho 'Test script finished.'\nexit 0\n")
-    os.chmod(test_script_path, 0o755)
-    
-    original_monitored_paths = list(config.MONITORED_SCRIPTS_PATHS) 
-    if str(test_script_path) not in config.MONITORED_SCRIPTS_PATHS:
-        config.MONITORED_SCRIPTS_PATHS.append(str(test_script_path))
-    
-    # For testing, you might want to set HUMAN_APPROVAL_THRESHOLD to "LOW" or "MEDIUM"
-    # in config.py to interactively approve/reject changes.
-    # You can also set AIOS_TEST_QUICK_CYCLE=true as an environment variable for faster cycles.
-    print(f"Orchestrator test setup: '{test_script_path}' is configured for monitoring.")
-    print(f"Default model: {config.DEFAULT_MODEL}. Approval: {config.HUMAN_APPROVAL_THRESHOLD}.")
-    print("Ensure Ollama is running for full test. The test will run cycles based on config or env var.")
-    print("Use Ctrl+C to stop.")
-
-    orchestrator_instance = Orchestrator()
-    orchestrator_instance.run()
-
-    # Cleanup (optional)
-    # config.MONITORED_SCRIPTS_PATHS = original_monitored_paths
-    # try: os.remove(test_script_path) except OSError: pass
-    # try: os.rmdir(sample_scripts_dir) except OSError: pass

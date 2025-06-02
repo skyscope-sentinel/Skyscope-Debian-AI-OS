@@ -32,7 +32,7 @@ This project translates a detailed pseudo code specification into a functional P
     *   Includes basic syntax checking for Bash script modifications.
     *   Can create new files (e.g., new scripts).
 *   **Rollback:** Can restore files from backups if an operation fails or leads to instability.
-*   **Command Execution:** Can execute system commands and AI-generated scripts (currently **without full sandboxing** - see warnings).
+*   **Command Execution:** Can execute system commands and AI-generated scripts. Supports direct execution (with strong warnings about risks) or containerized execution via Docker (if Docker is available and the "DOCKER" sandbox level is selected) for enhanced isolation of script execution.
 *   **Orchestration:** Manages the cycle of analysis, planning, approval, application, and monitoring.
 *   **Human Approval Workflow:** Prompts for human confirmation for changes based on configurable risk/impact thresholds.
 *   **Basic System Health Monitoring:** Includes a rudimentary system stability score and can trigger human intervention alerts.
@@ -47,6 +47,7 @@ This project translates a detailed pseudo code specification into a functional P
     *   Ensure the Ollama API endpoint (`http://localhost:11434` by default) is accessible from where you run the application.
 *   **Debian-based System:** The system analysis tools (`lsb_release`, `dpkg-query`, `systemctl`) are designed for Debian-based systems (e.g., Debian, Ubuntu).
 *   **Pip:** For installing Python package dependencies.
+*   **Docker (Optional):** If you intend to use the "DOCKER" `sandbox_level` for executing AI-generated scripts in a containerized environment, Docker must be installed and running. The user executing the AI OS Enhancer application will need appropriate permissions to interact with the Docker daemon (e.g., by being a member of the `docker` group). If Docker is not available or not used, script execution will fall back to direct execution with associated risks.
 
 ## Setup and Installation
 
@@ -89,6 +90,12 @@ Before running, review and customize `ai_os_enhancer/config.py`:
         str(PROJECT_ROOT / "sample_scripts" / "local_test_script.sh") # For scripts within the project
     ]
     ```
+*   **`AIOS_GITHUB_API_KEY`** (Optional): For features that interact with the GitHub API (planned for future development phases), you'll need to provide a GitHub Personal Access Token with appropriate permissions.
+    Set this environment variable before running the application:
+    ```bash
+    export AIOS_GITHUB_API_KEY="ghp_YourGitHubPersonalAccessTokenHere"
+    ```
+    For persistence, you can add this line to your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`). The application will function without this key, but GitHub-related capabilities will be disabled. Ensure the key has the necessary scopes (e.g., `public_repo` for reading public repositories, or more depending on planned features).
 
 ## How to Run
 
