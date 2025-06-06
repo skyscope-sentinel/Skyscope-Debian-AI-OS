@@ -35,7 +35,15 @@ This project translates a detailed pseudo code specification into a functional P
     *   Includes syntax checking for Bash scripts (using `bash -n`) and Python scripts (using `python -m py_compile`). If a syntax error is detected after a modification, the change is automatically rolled back.
     *   Can create new files (e.g., new scripts).
 *   **Rollback:** Can restore files from backups if an operation fails or leads to instability.
-*   **Command Execution:** Can execute system commands and AI-generated scripts. Supports direct execution (with strong warnings about risks) or containerized execution via Docker (if Docker is available and the "DOCKER" sandbox level is selected) for enhanced isolation of script execution.
+*   **Command Execution:**
+    *   Can execute system commands and AI-generated scripts.
+    *   Supports **direct execution** (with strong warnings about inherent risks).
+    *   Offers **containerized execution for script content** via Docker if `sandbox_level` is set to `"DOCKER"` in `execute_command_or_script` and Docker is available.
+        *   This method attempts to run script content (e.g., Bash or Python scripts) by dynamically building a temporary Docker image and running a container.
+        *   Default Docker images used:
+            *   Shell scripts (`bash`, `sh`): `debian:stable-slim` (configurable via `AIOS_DOCKER_SHELL_IMAGE`)
+            *   Python scripts: `python:3.9-slim` (configurable via `AIOS_DOCKER_PYTHON_IMAGE`)
+        *   If Docker is requested for direct command strings (not script content), it currently falls back to direct execution with a warning.
 *   **Orchestration:** Manages the cycle of analysis, planning, approval, application, and monitoring.
 *   **Human Approval Workflow:** Prompts for human confirmation for changes based on configurable risk/impact thresholds.
 *   **Basic System Health Monitoring:** Includes a rudimentary system stability score and can trigger human intervention alerts.
@@ -43,32 +51,48 @@ This project translates a detailed pseudo code specification into a functional P
     *   Ensure the Ollama API endpoint (`http://localhost:11434` by default) is accessible from where you run the application.
 *   **Debian-based System:** The system analysis tools (`lsb_release`, `dpkg-query`, `systemctl`) are designed for Debian-based systems (e.g., Debian, Ubuntu).
 *   **Pip:** For installing Python package dependencies.
-*   **Docker (Optional):** If you intend to use the "DOCKER" `sandbox_level` for executing AI-generated scripts in a containerized environment, Docker must be installed and running. The user executing the AI OS Enhancer application will need appropriate permissions to interact with the Docker daemon (e.g., by being a member of the `docker` group). If Docker is not available or not used, script execution will fall back to direct execution with associated risks.
+*   **Docker (Optional for sandboxed script execution):** If you intend to use the `"DOCKER"` `sandbox_level` for executing AI-generated *script content* in a containerized environment, Docker must be installed and running. The user executing the AI OS Enhancer application will typically need to be part of the `docker` group or have equivalent permissions to interact with the Docker daemon. If Docker is not available or not used for script execution, it will fall back to direct execution with associated risks.
 
 ## Setup and Installation
   
+### Environment Variables
+The application uses environment variables for certain configurations. These can be set in your shell before running the application.
+
 *   **`GITHUB_API_KEY`** (Optional): For features that interact with the GitHub API (planned for future development phases), you'll need to provide a GitHub Personal Access Token with appropriate permissions.
     Set this environment variable before running the application:
-    `
+    ```bash
     export GITHUB_API_KEY="ghp_YourGitHubPersonalAccessTokenHere"
-   `
+    ```
     For persistence, you can add this line to your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`). The application will function without this key, but GitHub-related capabilities will be disabled. Ensure the key has the necessary scopes (e.g., `public_repo` for reading public repositories, or more depending on planned features).
 
 *   **`AIOS_OLLAMA_API_ENDPOINT`** (Optional): Overrides the default Ollama API endpoint.
-    *   If not set, defaults to: `"http://localhost:11434/api/generate"`
+    *   Default: `"http://localhost:11434/api/generate"`
     *   Example: `export AIOS_OLLAMA_API_ENDPOINT="http://my-ollama-server:11434/api/generate"`
 
 *   **`AIOS_DEFAULT_MODEL`** (Optional): Overrides the default Ollama model used for analysis and generation.
-    *   If not set, defaults to: `"qwen2.5vl"` (or as specified in `config.py`)
+    *   Default: `"qwen2.5vl"` (or as specified in `config.py`)
     *   Example: `export AIOS_DEFAULT_MODEL="llama3"`
 
 *   **`AIOS_HUMAN_APPROVAL_THRESHOLD`** (Optional): Defines the minimum severity level that requires human approval for applying changes.
     *   Valid values: `"LOW"`, `"MEDIUM"`, `"HIGH"`.
-    *   If not set, defaults to: `"HIGH"` (meaning only high-risk/impact changes require approval, or medium risk with significant impact).
-    *   `LOW`: Almost all changes require approval.
-    *   `MEDIUM`: Medium and High risk/impact changes require approval.
-    *   `HIGH`: Only High risk changes (or Medium risk with Significant impact) require approval.
+    *   Default: `"HIGH"`
     *   Example: `export AIOS_HUMAN_APPROVAL_THRESHOLD="MEDIUM"`
+
+*   **`AIOS_MIN_STABILITY_FOR_ENHANCEMENT`** (Optional): Minimum system stability score (float, 0.0-100.0) required to attempt new enhancements.
+    *   Default: `60.0`
+    *   Example: `export AIOS_MIN_STABILITY_FOR_ENHANCEMENT="75.0"`
+
+*   **`AIOS_CYCLE_INTERVAL_SECONDS`** (Optional): Time in seconds the orchestrator waits between enhancement cycles.
+    *   Default: `300` (5 minutes)
+    *   Example: `export AIOS_CYCLE_INTERVAL_SECONDS="600"`
+
+*   **`AIOS_DOCKER_SHELL_IMAGE`** (Optional): Docker image used for sandboxing shell script execution.
+    *   Default: `"debian:stable-slim"`
+    *   Example: `export AIOS_DOCKER_SHELL_IMAGE="ubuntu:latest"`
+
+*   **`AIOS_DOCKER_PYTHON_IMAGE`** (Optional): Docker image used for sandboxing Python script execution.
+    *   Default: `"python:3.9-slim"`
+    *   Example: `export AIOS_DOCKER_PYTHON_IMAGE="python:3.11-slim"`
 
 ## How to Run
 

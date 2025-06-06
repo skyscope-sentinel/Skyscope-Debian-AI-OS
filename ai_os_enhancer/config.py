@@ -67,14 +67,25 @@ if _cycle_interval_env:
         print(f"Warning: Invalid value for AIOS_CYCLE_INTERVAL_SECONDS: '{_cycle_interval_env}'. Using default: {CYCLE_INTERVAL_SECONDS}")
         # Potentially log this warning
 
+# Docker Configuration for Sandboxing
+# DEFAULT_DOCKER_SHELL_IMAGE: Default Docker image for running shell scripts in sandbox mode.
+# Can be overridden by environment variable AIOS_DOCKER_SHELL_IMAGE.
+DEFAULT_DOCKER_SHELL_IMAGE = os.environ.get("AIOS_DOCKER_SHELL_IMAGE", "debian:stable-slim")
+
+# DEFAULT_DOCKER_PYTHON_IMAGE: Default Docker image for running Python scripts in sandbox mode.
+# Can be overridden by environment variable AIOS_DOCKER_PYTHON_IMAGE.
+DEFAULT_DOCKER_PYTHON_IMAGE = os.environ.get("AIOS_DOCKER_PYTHON_IMAGE", "python:3.9-slim")
+
+
 # Monitored script paths - this should be customized by the user.
 # MONITORED_SCRIPTS_PATHS: A list of paths to scripts that the application should monitor.
 # For now, it's an empty list. Users should add paths to their actual scripts.
+# Example: MONITORED_SCRIPTS_PATHS = [
+#    {"path": "/path/to/your/script.sh", "type": "script"},
+#    {"path": "/etc/your_config.conf", "type": "config"}
+# ]
 MONITORED_SCRIPTS_PATHS = [
-    # Example: "/opt/scripts/skyscope_sentinel_optimizer.sh",
-    # Add the actual path to your Skyscope Sentinel script here if applicable
-    # For development, you might want to add a path to a test script within the project
-    # e.g., str(PROJECT_ROOT / "sample_scripts" / "test_script.sh")
+    # Example: {"path": str(PROJECT_ROOT / "sample_scripts" / "test_script.sh"), "type": "script"},
 ]
 
 # Other constants can be added here as needed.
@@ -87,9 +98,8 @@ GITHUB_API_KEY = os.environ.get("AIOS_GITHUB_API_KEY")
 
 
 if __name__ == '__main__':
-    # For testing the paths
+    # For testing the paths and configurations
     print(f"Project Root: {PROJECT_ROOT}")
-    # print(f"Config File Path: {pathlib.Path(__file__)}") # Path to this config file itself
     print(f"Config Database Path: {CONFIG_DATABASE_PATH}")
     print(f"Log File Path: {LOG_FILE_PATH}")
     print(f"Backup Base Path: {BACKUP_BASE_PATH}")
@@ -98,5 +108,7 @@ if __name__ == '__main__':
     print(f"Human Approval Threshold: {HUMAN_APPROVAL_THRESHOLD}")
     print(f"Min Stability for Enhancement: {MIN_STABILITY_FOR_ENHANCEMENT}")
     print(f"Cycle Interval Seconds: {CYCLE_INTERVAL_SECONDS}")
+    print(f"Default Docker Shell Image: {DEFAULT_DOCKER_SHELL_IMAGE}")
+    print(f"Default Docker Python Image: {DEFAULT_DOCKER_PYTHON_IMAGE}")
     print(f"Monitored Scripts: {MONITORED_SCRIPTS_PATHS}")
     print(f"GitHub API Key: {'Loaded' if GITHUB_API_KEY else 'Not set / Not found in environment variables'}")
