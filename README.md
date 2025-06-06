@@ -97,7 +97,7 @@ The system currently includes the following predefined roles:
 
 *   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` guides the LLM to identify issues and suggest enhancements for individual items. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
 *   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
-*   **`ShellCommandGenerator`**: Translates natural language tasks into shell command suggestions, including safety notes and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
+*   **`ShellCommandGenerator`**: Translates natural language tasks into shell command suggestions, including a structured risk assessment, prerequisites, safety notes, and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
 
 These files serve as examples of how to structure role configurations.
 
@@ -114,7 +114,32 @@ Users can extend the system by adding their own roles:
 The system includes a specialized role named `ShellCommandGenerator` (defined in `ai_os_enhancer/roles/shell_command_generator.yaml`). This role is designed to:
 
 *   Translate natural language task descriptions (e.g., "install the htop package", "list all files modified in the last 24 hours") into appropriate shell commands for a Debian 13 environment.
-*   Return a structured JSON output containing the suggested command, important safety notes or prerequisites, and potential alternative commands.
+*   Return a structured JSON output. This output includes not only the suggested command but also a detailed `risk_assessment` (with `risk_level`, `operation_type`, `requires_privileges`), a list of `prerequisites`, optional `setup_commands` to meet those prerequisites, important `safety_notes`, potential `clarifications_needed` if the task is ambiguous, and `alternatives` to the suggested command.
+
+**Example JSON Output from `ShellCommandGenerator`:**
+```json
+{
+  "task_description": "Install the nginx package and ensure it starts on boot.",
+  "generated_command": "sudo apt update && sudo apt install -y nginx && sudo systemctl enable nginx && sudo systemctl start nginx",
+  "risk_assessment": {
+    "risk_level": "Medium",
+    "operation_type": "PackageManagementWrite",
+    "requires_privileges": "root"
+  },
+  "prerequisites": ["Internet access to Debian repositories."],
+  "setup_commands": [],
+  "safety_notes": [
+    "Installs software from Debian repositories.",
+    "Modifies system services to start on boot.",
+    "The '-y' flag automatically confirms installation."
+  ],
+  "clarifications_needed": [],
+  "alternatives": [
+    "Run commands separately for more control.",
+    "Use 'apt-get' instead of 'apt' for older systems (though 'apt' is preferred on modern Debian)."
+  ]
+}
+```
 
 **Important:** The `generate_shell_command()` function in `ai_os_enhancer/ollama_interface.py` utilizes this role by default. The shell commands generated are suggestions for review and are **not automatically executed** by this specific function. Future developments might integrate these suggestions into the Orchestrator's approval workflow for potential execution by the `EnhancementApplier`.
 
