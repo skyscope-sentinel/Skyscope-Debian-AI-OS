@@ -49,6 +49,7 @@ class Orchestrator:
         # (e.g., it retrieves an existing logger if already configured).
         self.logger = logger_setup.setup_logger("Orchestrator_instance") # Or use the global 'logger' directly
         self.logger.info("Orchestrator instance created.")
+        self.logger.info("Shell Assistant capability is available via ollama_interface.generate_shell_command. Orchestrator currently does not use this autonomously.")
         self.initialize_system()
 
     def _log_user_alert(self, message, level="INFO"):

@@ -93,10 +93,11 @@ output_format: "json" # Optional, e.g., "json" or "text". Defines expected LLM o
 
 ### Default Roles
 
-The system currently includes the following predefined roles, used by the Orchestrator:
+The system currently includes the following predefined roles:
 
 *   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` guides the LLM to identify issues and suggest enhancements for individual items. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
 *   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
+*   **`ShellCommandGenerator`**: Translates natural language tasks into shell command suggestions, including safety notes and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
 
 These files serve as examples of how to structure role configurations.
 
@@ -106,15 +107,28 @@ Users can extend the system by adding their own roles:
 
 1.  Create a new YAML file in the `ai_os_enhancer/roles/` directory (e.g., `mycoderrole.yaml`).
 2.  Define the role using the structure described above, ensuring `role_name` inside the YAML matches how you intend to call it.
-3.  To use this new role, you would typically modify the Python code (e.g., in the `Orchestrator` or other modules) that calls an `ollama_interface` function (like `analyze_system_item`, `conceive_enhancement_strategy`, or `generate_code_or_modification`) to pass your new `role_name` as an argument.
+3.  To use this new role, you would typically modify the Python code (e.g., in the `Orchestrator` or other modules) that calls an `ollama_interface` function (like `analyze_system_item`, `conceive_enhancement_strategy`, `generate_code_or_modification`, or `generate_shell_command`) to pass your new `role_name` as an argument.
+
+#### Example Role: Shell Command Generator (`ShellCommandGenerator`)
+
+The system includes a specialized role named `ShellCommandGenerator` (defined in `ai_os_enhancer/roles/shell_command_generator.yaml`). This role is designed to:
+
+*   Translate natural language task descriptions (e.g., "install the htop package", "list all files modified in the last 24 hours") into appropriate shell commands for a Debian 13 environment.
+*   Return a structured JSON output containing the suggested command, important safety notes or prerequisites, and potential alternative commands.
+
+**Important:** The `generate_shell_command()` function in `ai_os_enhancer/ollama_interface.py` utilizes this role by default. The shell commands generated are suggestions for review and are **not automatically executed** by this specific function. Future developments might integrate these suggestions into the Orchestrator's approval workflow for potential execution by the `EnhancementApplier`.
 
 ## Prerequisites
 
 *   **Python:** Version 3.10 or higher recommended.
 *   **Ollama:** An Ollama installation with one or more models pulled (e.g., `ollama pull llama3`, `ollama pull qwen2.5vl`).
     *   Ensure the Ollama API endpoint (`http://localhost:11434` by default) is accessible from where you run the application.
+*   **PyYAML:** The `PyYAML` package is required for parsing role configuration files. Install it via pip:
+    ```bash
+    pip install PyYAML
+    ```
 *   **Debian-based System:** The system analysis tools (`lsb_release`, `dpkg-query`, `systemctl`) are designed for Debian-based systems (e.g., Debian, Ubuntu).
-*   **Pip:** For installing Python package dependencies.
+*   **Pip:** For installing Python package dependencies (like `requests`, `PyYAML`).
 *   **Docker (Optional for sandboxed script execution):** If you intend to use the `"DOCKER"` `sandbox_level` for executing AI-generated *script content* in a containerized environment, Docker must be installed and running. The user executing the AI OS Enhancer application will typically need to be part of the `docker` group or have equivalent permissions to interact with the Docker daemon. If Docker is not available or not used for script execution, it will fall back to direct execution with associated risks.
 
 ## Setup and Installation
