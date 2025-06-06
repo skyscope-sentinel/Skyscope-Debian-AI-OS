@@ -28,6 +28,7 @@ This project translates a detailed pseudo code specification into a functional P
     *   Queries an Ollama-compatible LLM to analyze system items (configs/scripts).
     *   Leverages the LLM to conceive enhancement strategies based on analyses.
     *   Can request the LLM to generate code or modifications.
+    *   Supports role-based configurations for more specialized LLM interactions (see "AI Personas (Roles)" section).
 *   **Enhancement Application:**
     *   Backs up files before modification.
     *   Applies text-based changes to configuration files.
@@ -47,7 +48,70 @@ This project translates a detailed pseudo code specification into a functional P
 *   **Orchestration:** Manages the cycle of analysis, planning, approval, application, and monitoring.
 *   **Human Approval Workflow:** Prompts for human confirmation for changes based on configurable risk/impact thresholds.
 *   **Basic System Health Monitoring:** Includes a rudimentary system stability score and can trigger human intervention alerts.
-	@@ -47,6 +47,7 @@ This project translates a detailed pseudo code specification into a functional P
+
+## AI Personas (Roles)
+
+To allow for more specialized and configurable LLM behaviors, the AI OS Enhancer uses a role-based system. Each "role" defines a specific persona for the AI, including its system prompt, the Ollama model to use, relevant knowledge base keywords, and the expected output format for its responses. This allows tailoring the AI's responses and capabilities to specific tasks like system analysis, strategy conception, or code generation.
+
+### Role File Location and Naming
+
+*   Role configurations are defined in YAML files.
+*   These files must be located in the `ai_os_enhancer/roles/` directory within the project.
+*   The filename convention is `<role_name>.yaml` (e.g., `generic_system_item_analyzer.yaml` for a role named `GenericSystemItemAnalyzer`). The `role_name` in the YAML file (case-sensitive) should correspond to the base name of the file (which is typically made lowercase).
+
+### Role YAML Structure
+
+Each role YAML file should follow this structure:
+
+```yaml
+role_name: MyCustomRole # Mandatory, unique name for the role (case-sensitive)
+description: "A human-readable description of what this role does." # Optional
+system_prompt: | # Mandatory, the detailed system prompt for the LLM
+  You are a specialized AI assistant for [specific domain].
+  Your primary task is to [describe task].
+  Always follow these guidelines:
+  1. Guideline one.
+  2. Guideline two.
+  When responding to [specific type of input], provide [specific type of output].
+model_name: "ollama_model_name:tag" # Optional, overrides the global default model for this role
+knowledge_base_keywords: # Optional, list of keywords to load relevant documents
+  - "custom_topic_1"
+  - "specific_tool_guide"
+output_format: "json" # Optional, e.g., "json" or "text". Defines expected LLM output style.
+                      # If "json", specific JSON structures are usually defined in the system_prompt.
+                      # Defaults vary by function if not set here (e.g., analysis expects JSON).
+```
+
+**Key Fields:**
+
+*   `role_name` (string, mandatory): The unique identifier for the role. This is used to load the role.
+*   `description` (string, optional): Helps users understand the role's purpose.
+*   `system_prompt` (string, mandatory): The core instruction given to the LLM, defining its persona, task, and any specific output requirements. Multi-line YAML strings (using `|`) are recommended for readability.
+*   `model_name` (string, optional): If specified, this role will use this Ollama model, overriding the global default model (`AIOS_DEFAULT_MODEL` or the default in `config.py`).
+*   `knowledge_base_keywords` (list of strings, optional): A list of keywords. If provided, the system will attempt to load corresponding `.txt` files from the `knowledge_base/keywords/` directory to augment the LLM's context when this role is active.
+*   `output_format` (string, optional): Specifies the expected format of the LLM's response. Common values are `"json"` (if structured data is required, in which case the `system_prompt` should detail the JSON schema) or `"text"` (for free-form textual output). The default behavior in the application might vary by function if this is not set (e.g., analysis functions typically default to expecting JSON).
+
+### Default Roles
+
+The system currently includes the following predefined roles, used by the Orchestrator:
+
+*   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` guides the LLM to identify issues and suggest enhancements for individual items. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
+*   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
+
+These files serve as examples of how to structure role configurations.
+
+### Adding Custom Roles
+
+Users can extend the system by adding their own roles:
+
+1.  Create a new YAML file in the `ai_os_enhancer/roles/` directory (e.g., `mycoderrole.yaml`).
+2.  Define the role using the structure described above, ensuring `role_name` inside the YAML matches how you intend to call it.
+3.  To use this new role, you would typically modify the Python code (e.g., in the `Orchestrator` or other modules) that calls an `ollama_interface` function (like `analyze_system_item`, `conceive_enhancement_strategy`, or `generate_code_or_modification`) to pass your new `role_name` as an argument.
+
+## Prerequisites
+
+*   **Python:** Version 3.10 or higher recommended.
+*   **Ollama:** An Ollama installation with one or more models pulled (e.g., `ollama pull llama3`, `ollama pull qwen2.5vl`).
     *   Ensure the Ollama API endpoint (`http://localhost:11434` by default) is accessible from where you run the application.
 *   **Debian-based System:** The system analysis tools (`lsb_release`, `dpkg-query`, `systemctl`) are designed for Debian-based systems (e.g., Debian, Ubuntu).
 *   **Pip:** For installing Python package dependencies.
@@ -116,16 +180,16 @@ The Orchestrator module drives the core logic in a loop:
 2.  **Analysis Phase:**
     *   `SystemStateAnalyzer` lists key configuration areas and monitored scripts.
     *   Content of these items is read.
-    *   `OllamaInterface` sends each item to the LLM for analysis, asking for potential issues and enhancement ideas in a structured JSON format.
+    *   `OllamaInterface` sends each item to the LLM for analysis (potentially using a configured AI role), asking for potential issues and enhancement ideas in a structured JSON format.
 3.  **Conception Phase:**
-    *   A system snapshot and all analysis results are sent to the LLM via `OllamaInterface`.
+    *   A system snapshot and all analysis results are sent to the LLM via `OllamaInterface` (potentially using a configured AI role).
     *   The LLM is tasked to conceive an overall strategy and a prioritized list of specific enhancements. This includes details about the proposed change, justification, risk, and impact.
 4.  **Application Phase:**
     *   Each proposed enhancement is considered one by one.
     *   **Human approval** is requested if the enhancement meets the configured threshold for risk/impact.
     *   If approved:
         *   The target file is backed up by `EnhancementApplier`.
-        *   If the LLM plan indicates code/content needs to be generated (e.g., a new function body), `OllamaInterface` requests this from the LLM.
+        *   If the LLM plan indicates code/content needs to be generated (e.g., a new function body), `OllamaInterface` requests this from the LLM (potentially using a configured AI role).
         *   `EnhancementApplier` attempts to apply the change (e.g., modify config text, patch script, create new file).
         *   For Bash scripts, a syntax check (`bash -n`) is performed. For Python scripts, a syntax check (`python -m py_compile`) is performed. If a syntax check fails, the change is automatically rolled back from the backup.
 5.  **Monitoring:**
