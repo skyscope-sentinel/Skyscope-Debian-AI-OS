@@ -11,6 +11,9 @@ The AI-Driven OS Enhancer is a Python application designed to conceptualize how 
 
 This project translates a detailed pseudo code specification into a functional Python application. It implements the core logic for system analysis, LLM interaction, and change application, but it requires careful setup, configuration, and human oversight.
 
+![Skyscope Sentinel Boot Splash](./Skyscope-Sentinel-AI-OS.png)
+
+
 ## !!! CRITICAL WARNINGS !!!
 
 *   **EXPERIMENTAL SOFTWARE:** This is highly experimental software. It interacts with your operating system, modifies files, and executes commands. **USE WITH EXTREME CAUTION.**
