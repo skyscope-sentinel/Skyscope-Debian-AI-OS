@@ -28,7 +28,7 @@ This project translates a detailed pseudo code specification into a functional P
     *   Queries an Ollama-compatible LLM to analyze system items (configs/scripts).
     *   Leverages the LLM to conceive enhancement strategies based on analyses.
     *   Can request the LLM to generate code or modifications.
-    *   Supports role-based configurations for more specialized LLM interactions (see "AI Personas (Roles)" section).
+    *   Supports role-based configurations for more specialized LLM interactions (see "AI Personas (Roles)" section), including translation of natural language to shell commands.
 *   **Enhancement Application:**
     *   Backs up files before modification.
     *   Applies text-based changes to configuration files.
@@ -45,8 +45,11 @@ This project translates a detailed pseudo code specification into a functional P
             *   Shell scripts (`bash`, `sh`): `debian:stable-slim` (configurable via `AIOS_DOCKER_SHELL_IMAGE`)
             *   Python scripts: `python:3.9-slim` (configurable via `AIOS_DOCKER_PYTHON_IMAGE`)
         *   If Docker is requested for direct command strings (not script content), it currently falls back to direct execution with a warning.
-*   **Orchestration:** Manages the cycle of analysis, planning, approval, application, and monitoring.
-*   **Human Approval Workflow:** Prompts for human confirmation for changes based on configurable risk/impact thresholds.
+    *   Approved AI-generated shell commands (originating from 'shell_task' proposals) can be executed, with optional Docker sandboxing as per the script execution settings.
+*   **Orchestration:**
+    *   Manages the cycle of analysis, planning, approval, application, and monitoring.
+    *   Can now process 'shell_task' proposals from the AI strategist, which involves generating specific shell commands (using a dedicated AI role) for approval and subsequent execution.
+*   **Human Approval Workflow:** Prompts for human confirmation for changes based on configurable risk/impact thresholds, including detailed display of proposed shell commands and their assessed risks.
 *   **Basic System Health Monitoring:** Includes a rudimentary system stability score and can trigger human intervention alerts.
 
 ## AI Personas (Roles)
@@ -83,7 +86,6 @@ output_format: "json" # Optional, e.g., "json" or "text". Defines expected LLM o
 ```
 
 **Key Fields:**
-
 *   `role_name` (string, mandatory): The unique identifier for the role. This is used to load the role.
 *   `description` (string, optional): Helps users understand the role's purpose.
 *   `system_prompt` (string, mandatory): The core instruction given to the LLM, defining its persona, task, and any specific output requirements. Multi-line YAML strings (using `|`) are recommended for readability.
@@ -96,15 +98,14 @@ output_format: "json" # Optional, e.g., "json" or "text". Defines expected LLM o
 The system currently includes the following predefined roles:
 
 *   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` guides the LLM to identify issues and suggest enhancements for individual items. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
-*   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
-*   **`ShellCommandGenerator`**: Translates natural language tasks into shell command suggestions, including a structured risk assessment, prerequisites, safety notes, and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
+*   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks, which can now include `shell_task` types for system-level operations. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
+*   **`ShellCommandGenerator`**: Translates natural language tasks (often proposed by the `EnhancementStrategist` as a `shell_task`) into specific shell command suggestions, including a structured risk assessment, prerequisites, safety notes, and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
 
 These files serve as examples of how to structure role configurations.
 
 ### Adding Custom Roles
 
 Users can extend the system by adding their own roles:
-
 1.  Create a new YAML file in the `ai_os_enhancer/roles/` directory (e.g., `mycoderrole.yaml`).
 2.  Define the role using the structure described above, ensuring `role_name` inside the YAML matches how you intend to call it.
 3.  To use this new role, you would typically modify the Python code (e.g., in the `Orchestrator` or other modules) that calls an `ollama_interface` function (like `analyze_system_item`, `conceive_enhancement_strategy`, `generate_code_or_modification`, or `generate_shell_command`) to pass your new `role_name` as an argument.
@@ -141,7 +142,7 @@ The system includes a specialized role named `ShellCommandGenerator` (defined in
 }
 ```
 
-**Important:** The `generate_shell_command()` function in `ai_os_enhancer/ollama_interface.py` utilizes this role by default. The shell commands generated are suggestions for review and are **not automatically executed** by this specific function. Future developments might integrate these suggestions into the Orchestrator's approval workflow for potential execution by the `EnhancementApplier`.
+**Important:** The `generate_shell_command()` function in `ai_os_enhancer/ollama_interface.py` utilizes this role. When the `EnhancementStrategist` proposes a `shell_task`, the Orchestrator uses this function to get the detailed command proposal. The shell commands generated are suggestions for review and are **not automatically executed** without passing through the Orchestrator's approval workflow. If approved, the Orchestrator then instructs the `EnhancementApplier` to execute the command.
 
 ## Prerequisites
 
@@ -219,18 +220,22 @@ The Orchestrator module drives the core logic in a loop:
 2.  **Analysis Phase:**
     *   `SystemStateAnalyzer` lists key configuration areas and monitored scripts.
     *   Content of these items is read.
-    *   `OllamaInterface` sends each item to the LLM for analysis (potentially using a configured AI role), asking for potential issues and enhancement ideas in a structured JSON format.
+    *   `OllamaInterface` sends each item to the LLM for analysis (potentially using a configured AI role, e.g., `GenericSystemItemAnalyzer`), asking for potential issues and enhancement ideas in a structured JSON format.
 3.  **Conception Phase:**
-    *   A system snapshot and all analysis results are sent to the LLM via `OllamaInterface` (potentially using a configured AI role).
-    *   The LLM is tasked to conceive an overall strategy and a prioritized list of specific enhancements. This includes details about the proposed change, justification, risk, and impact.
+    *   A system snapshot and all analysis results are sent to the LLM via `OllamaInterface` (potentially using a configured AI role, e.g., `EnhancementStrategist`).
+    *   The LLM is tasked to conceive an overall strategy and a prioritized list of specific enhancements. This can include file modifications, script changes, or **system-level tasks described in natural language (as 'shell_task' types).**
 4.  **Application Phase:**
     *   Each proposed enhancement is considered one by one.
-    *   **Human approval** is requested if the enhancement meets the configured threshold for risk/impact.
+    *   **Human approval** is requested if the enhancement meets the configured threshold for risk/impact. This includes displaying detailed information about the proposed change.
     *   If approved:
-        *   The target file is backed up by `EnhancementApplier`.
-        *   If the LLM plan indicates code/content needs to be generated (e.g., a new function body), `OllamaInterface` requests this from the LLM (potentially using a configured AI role).
-        *   `EnhancementApplier` attempts to apply the change (e.g., modify config text, patch script, create new file).
-        *   For Bash scripts, a syntax check (`bash -n`) is performed. For Python scripts, a syntax check (`python -m py_compile`) is performed. If a syntax check fails, the change is automatically rolled back from the backup.
+        *   For file-based changes, the target file is backed up by `EnhancementApplier`.
+        *   If the LLM plan indicates code/content needs to be generated (e.g., a new function body for a script, or content for a new file), `OllamaInterface` requests this from the LLM (potentially using a configured AI role).
+        *   If the enhancement is a `'shell_task'`:
+            *   The Orchestrator uses the `natural_language_task` from the proposal to request a specific shell command, risk assessment, and safety notes from the `ShellCommandGenerator` role via `ollama_interface.generate_shell_command()`.
+            *   These detailed command suggestions are presented again as part of the approval detail step (or could be a secondary approval step in a more complex workflow). If already approved, this step primarily enriches the enhancement data.
+            *   If the command generation is successful and the task is still approved, the Orchestrator instructs `EnhancementApplier` (specifically, its `execute_command_or_script` function) to run the generated shell command, potentially using Docker sandboxing if configured.
+        *   For file modifications or script changes, `EnhancementApplier` attempts to apply the change.
+        *   For Bash scripts and Python scripts, a syntax check is performed. If it fails, the change is automatically rolled back from the backup.
 5.  **Monitoring:**
     *   `SystemStateAnalyzer` checks basic system health indicators.
     *   The system stability score is updated. If it drops critically low, human intervention is flagged.
