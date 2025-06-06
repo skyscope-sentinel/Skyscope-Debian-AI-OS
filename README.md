@@ -1,5 +1,5 @@
 Skyscope Sentinel Intelligence presents
-# AI-Driven OS Enhancer for Debian
+# Skyscope Sentinel AI OS
 Developer Casey Jay Topojani
 
 
