@@ -42,9 +42,9 @@ def _execute_command(command_string):
             cmd_list = command_string
         else:
             cmd_list = shlex.split(command_string)
-            
+
         process = subprocess.run(cmd_list, capture_output=True, text=True, check=False, timeout=30) # Added timeout
-        
+
         stdout_log = process.stdout.strip()
         stderr_log = process.stderr.strip()
         if len(stdout_log) > 200: stdout_log = stdout_log[:200] + "... (truncated)"
@@ -93,7 +93,7 @@ def get_installed_packages():
     """
     stdout, stderr, return_code = _execute_command("dpkg-query -W -f='${Package}\n'")
     if return_code == 0 and stdout:
-        return [pkg for pkg in stdout.splitlines() if pkg] 
+        return [pkg for pkg in stdout.splitlines() if pkg]
     else:
         logger.warning("dpkg-query failed. Attempting 'apt list --installed'. This might be slower.")
         stdout_apt, stderr_apt, rc_apt = _execute_command("apt list --installed")
@@ -118,10 +118,10 @@ def get_service_status(service_name: str) -> str | None:
     if not service_name or not all(c.isalnum() or c in ['-', '_', '.', '@'] for c in service_name): # Allow '@' for template instances
         logger.error(f"Invalid service name format: {service_name}")
         return None
-        
+
     stdout, stderr, return_code = _execute_command(f"systemctl is-active {shlex.quote(service_name)}")
-    
-    if stdout: 
+
+    if stdout:
         return stdout.strip()
     else:
         logger.debug(f"Service '{service_name}': 'is-active' returned empty stdout. RC: {return_code}. Stderr: {stderr}")
@@ -160,7 +160,7 @@ def read_file_content(file_path_str: str) -> str | None:
     except PermissionError:
         logger.error(f"Permission denied reading file: {file_path_str}")
         return None
-    except Exception as e: 
+    except Exception as e:
         logger.error(f"Failed to read file {file_path_str}: {e}", exc_info=True)
         return None
 
@@ -191,23 +191,23 @@ def get_file_owner(file_path_str: str) -> str | None:
         if not file_path.exists():
             logger.debug(f"Path does not exist for owner check: {file_path_str}")
             return None
-        
+
         stat_info = file_path.stat()
         uid = stat_info.st_uid
         gid = stat_info.st_gid
 
-        import pwd 
-        import grp  
+        import pwd
+        import grp
 
         try:
             user_name = pwd.getpwuid(uid).pw_name
-        except KeyError: 
+        except KeyError:
             logger.debug(f"Could not find username for UID {uid} (path: {file_path_str})")
-            user_name = str(uid) 
-        
+            user_name = str(uid)
+
         try:
             group_name = grp.getgrgid(gid).gr_name
-        except KeyError: 
+        except KeyError:
             logger.debug(f"Could not find group name for GID {gid} (path: {file_path_str})")
             group_name = str(gid)
 
@@ -237,30 +237,30 @@ def list_key_config_and_script_areas():
         {"name": "LogRotation", "type": "config", "paths_patterns": ["/etc/logrotate.conf", "/etc/logrotate.d/*"], "heuristic": "Log management"},
         {"name": "UserManagement", "type": "config", "paths_patterns": ["/etc/passwd", "/etc/shadow", "/etc/group", "/etc/sudoers", "/etc/sudoers.d/*"], "heuristic": "User accounts and privileges"},
     ]
-    
+
     expanded_areas = []
     for area_def in base_configs_definitions:
         current_paths = []
         for pattern in area_def["paths_patterns"]:
             try:
-                found_paths = list(glob.iglob(pattern, recursive=False)) 
+                found_paths = list(glob.iglob(pattern, recursive=False))
                 if found_paths:
                     current_paths.extend(found_paths)
                 elif not any(c in pattern for c in "*?[]"): # Not a glob pattern
                     # AI might want to know about its absence or create it.
                     # Only add if explicitly configured and not found by glob (which means it doesn't exist)
-                    # current_paths.append(pattern) 
+                    # current_paths.append(pattern)
                     logger.debug(f"Specific path {pattern} not found for area {area_def['name']}. Not adding to list.")
                 else:
                     logger.debug(f"Glob pattern {pattern} in area {area_def['name']} yielded no results.")
             except Exception as e:
                 logger.error(f"Error during globbing pattern {pattern} for area {area_def['name']}: {e}", exc_info=True)
-        
+
         if current_paths:
             expanded_areas.append({
                 "name": area_def["name"],
                 "type": area_def["type"],
-                "paths": sorted(list(set(current_paths))), 
+                "paths": sorted(list(set(current_paths))),
                 "heuristic": area_def["heuristic"]
             })
 
@@ -276,7 +276,7 @@ def list_key_config_and_script_areas():
                 script_type = item.get("type", "script")
             elif isinstance(item, str):
                 script_path_str = item
-            
+
             if not script_path_str:
                 logger.warning(f"Invalid item in MONITORED_SCRIPTS_PATHS: {item}")
                 continue
@@ -286,12 +286,12 @@ def list_key_config_and_script_areas():
                 user_scripts_definitions.append({
                     "name": script_path.name,
                     "type": script_type, # Use provided type or default
-                    "paths": [str(script_path)], 
+                    "paths": [str(script_path)],
                     "heuristic": "User-defined script/config, potential for AI refactoring or analysis"
                 })
             else:
                 logger.warning(f"Monitored path from config not found or not a file: {script_path_str}. It will not be added.")
-    
+
     return expanded_areas + user_scripts_definitions
 
 def check_ollama_service_availability(api_endpoint: str) -> bool:
@@ -309,10 +309,10 @@ def check_ollama_service_availability(api_endpoint: str) -> bool:
     try:
         parsed_url = urlparse(api_endpoint)
         # For "/api/generate" like endpoints, base is just scheme+netloc. For "/" just use it.
-        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}/" 
-        
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}/"
+
         logger.debug(f"Checking Ollama service availability at base URL: {base_url}")
-        response = requests.get(base_url, timeout=5) 
+        response = requests.get(base_url, timeout=5)
         # Ollama's base URL typically returns "Ollama is running" with a 200 OK.
         if response.status_code == 200 and "Ollama is running" in response.text:
             logger.info(f"Ollama service is available at {base_url}. Status: {response.status_code}.")
@@ -320,7 +320,7 @@ def check_ollama_service_availability(api_endpoint: str) -> bool:
         else:
             logger.warning(f"Ollama service at {base_url} responded with status {response.status_code} or unexpected content. Content (first 100 chars): '{response.text[:100]}'")
             return False
-            
+
     except requests.exceptions.Timeout:
         logger.error(f"Timeout trying to reach Ollama service at derived base URL from '{api_endpoint}'.")
         return False
@@ -330,7 +330,7 @@ def check_ollama_service_availability(api_endpoint: str) -> bool:
     except requests.exceptions.RequestException as e:
         logger.error(f"Error checking Ollama service availability (derived base from '{api_endpoint}'): {e}", exc_info=True)
         return False
-    except Exception as e_gen: 
+    except Exception as e_gen:
         logger.error(f"Unexpected error during Ollama availability check for endpoint '{api_endpoint}': {e_gen}", exc_info=True)
         return False
 
@@ -356,11 +356,11 @@ def get_system_snapshot() -> dict:
         snapshot["kernel_version"] = "Error"
 
     try:
-        snapshot["load_avg"] = os.getloadavg() 
+        snapshot["load_avg"] = os.getloadavg()
     except OSError as e: # More specific exception for getloadavg
         logger.error(f"Error getting load average (os.getloadavg not available or failed): {e}", exc_info=True)
         snapshot["load_avg"] = ("Error", "Error", "Error")
-    except Exception as e: 
+    except Exception as e:
         logger.error(f"Unexpected error getting load average: {e}", exc_info=True)
         snapshot["load_avg"] = ("Error", "Error", "Error")
 
@@ -376,7 +376,7 @@ def get_system_snapshot() -> dict:
                     val = parts[1]
                     if key in ["MemTotal", "MemFree", "MemAvailable", "Buffers", "Cached", "SwapTotal", "SwapFree"]:
                         mem_info[key] = f"{val} {parts[2] if len(parts) > 2 else 'kB'}"
-            
+
             if all(k in mem_info and mem_info[k].split()[0].isdigit() for k in ["MemTotal", "MemFree", "Buffers", "Cached"]):
                 mt = int(mem_info["MemTotal"].split()[0])
                 mf = int(mem_info["MemFree"].split()[0])
@@ -412,14 +412,14 @@ def get_system_snapshot() -> dict:
     except Exception as e:
         logger.error(f"Error counting running processes: {e}", exc_info=True)
         snapshot["running_processes_count"] = "Error"
-        
+
     try:
         uptime_out, _, rc = _execute_command("uptime -p")
         snapshot["system_uptime"] = uptime_out if rc == 0 and uptime_out else "Error executing uptime or empty output"
     except Exception as e:
         logger.error(f"Error getting system uptime: {e}", exc_info=True)
         snapshot["system_uptime"] = "Error"
-        
+
     return snapshot
 
 
@@ -432,10 +432,10 @@ if __name__ == '__main__':
         logger.info("Logger already initialized. Set level to DEBUG for __main__ block tests.")
 
     logger.info("--- SystemStateAnalyzer Test ---")
-    
+
     debian_version = get_debian_version()
     logger.info(f"Debian Version: {debian_version if debian_version else 'Not found or error'}")
-    
+
     installed_packages = get_installed_packages()
     if installed_packages:
         logger.info(f"Installed Packages (first 3): {installed_packages[:3]}")
@@ -458,17 +458,17 @@ if __name__ == '__main__':
         with open(dummy_file_path, "w", encoding="utf-8") as f:
             f.write("Hello, AI OS Enhancer!\nThis is a test file for system_analyzer.\nLine 3.")
         logger.info(f"Created dummy file: {dummy_file_path}")
-        
+
         content = read_file_content(str(dummy_file_path))
         if content is not None:
-            log_content = content[:60].replace('\n', '\\n') 
+            log_content = content[:60].replace('\n', '\\n')
             logger.info(f"Dummy file content (first 60 chars): '{log_content}'")
         else:
             logger.error(f"Failed to read dummy file content.")
-        
+
         permissions = get_file_permissions(str(dummy_file_path))
         logger.info(f"Dummy file permissions: {permissions if permissions else 'Error'}")
-        
+
         owner = get_file_owner(str(dummy_file_path))
         logger.info(f"Dummy file owner: {owner if owner else 'Error'}")
 
@@ -485,7 +485,7 @@ if __name__ == '__main__':
     key_areas = list_key_config_and_script_areas()
     logger.info(f"Found {len(key_areas)} key config/script areas.")
     for i, area in enumerate(key_areas):
-        if i < 3: 
+        if i < 3:
              logger.info(f"Area: {area['name']}, Type: {area['type']}, Paths (up to 2): {area['paths'][:2]}..., Heuristic: {area['heuristic']}")
         elif i == 3:
              logger.info("... and potentially more areas (logging limited for brevity).")
@@ -503,7 +503,7 @@ if __name__ == '__main__':
     logger.info(f"Checking Ollama service at 'http://localhost:11223' (expected fail)...") # Non-standard port
     ollama_fail_test = check_ollama_service_availability('http://localhost:11223')
     logger.info(f"Ollama service available at 'http://localhost:11223': {ollama_fail_test}")
-    
+
     # Test get_system_snapshot
     logger.info("--- System Snapshot ---")
     system_snapshot = get_system_snapshot()
