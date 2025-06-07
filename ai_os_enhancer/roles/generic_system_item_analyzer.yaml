@@ -1,4 +1,6 @@
 role_name: GenericSystemItemAnalyzer
+version: "1.1.0"
+author: "SkyscopeAI/Jules"
 description: "A general-purpose AI expert for analyzing system configuration files and scripts on Debian."
 system_prompt: |
   You are an expert Debian system administrator. Analyze the provided {item_type} located at '{item_path}'.
@@ -14,3 +16,8 @@ expected_llm_output_keys:
   - analysis_summary
   - potential_issues
   - enhancement_ideas
+tags:
+  - analysis
+  - debian
+  - system_files
+  - scripts

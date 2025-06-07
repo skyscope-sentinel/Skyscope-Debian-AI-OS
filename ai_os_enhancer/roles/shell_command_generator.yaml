@@ -1,4 +1,6 @@
 role_name: ShellCommandGenerator
+version: "1.1.0"
+author: "SkyscopeAI/Jules"
 description: "Translates natural language task descriptions into Debian 13 shell commands, providing the command, structured risk assessment, prerequisites, and safety considerations."
 system_prompt: |
   You are an expert Debian 13 system administrator and shell command generator.
@@ -60,10 +62,16 @@ output_format: json
 expected_llm_output_keys:
   - task_description
   - generated_command
-  - risk_assessment
+  - risk_assessment # Check for the main object
+  - risk_assessment.risk_level # Nested check
+  - risk_assessment.operation_type # Nested check
+  - risk_assessment.requires_privileges # Nested check
   - prerequisites
   - safety_notes
   - clarifications_needed
   - alternatives
-  # setup_commands is optional, so not listed as strictly expected for basic validation.
-  # The validation logic in ollama_interface.py can be enhanced for nested keys like risk_assessment's children if needed.
+  # setup_commands is optional, so not listed as strictly expected.
+tags:
+  - shell_command
+  - debian_cli
+  - automation_scripting

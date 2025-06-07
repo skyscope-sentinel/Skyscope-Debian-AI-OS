@@ -67,44 +67,51 @@ To allow for more specialized and configurable LLM behaviors, the AI OS Enhancer
 Each role YAML file should follow this structure:
 
 ```yaml
-role_name: MyCustomRole # Mandatory, unique name for the role (case-sensitive)
+role_name: MyCustomRole        # Mandatory, unique name for the role (case-sensitive)
+author: "YourName/TeamName"  # Optional, creator of the role definition
+version: "1.0.0"             # Optional, version of the role definition
 description: "A human-readable description of what this role does." # Optional
+tags:                        # Optional, list of keywords for categorization
+  - "custom"
+  - "specific_domain"
 system_prompt: | # Mandatory, the detailed system prompt for the LLM
   You are a specialized AI assistant for [specific domain].
-  Your primary task is to [describe task].
-  Always follow these guidelines:
-  1. Guideline one.
-  2. Guideline two.
-  When responding to [specific type of input], provide [specific type of output].
+  Your primary task is to {task_description}.
+  Analyze the {item_type} at '{item_path}'.
+  Always follow these guidelines...
 model_name: "ollama_model_name:tag" # Optional, overrides the global default model for this role
 knowledge_base_keywords: # Optional, list of keywords to load relevant documents
   - "custom_topic_1"
   - "specific_tool_guide"
 output_format: "json" # Optional, e.g., "json" or "text". Defines expected LLM output style.
-expected_llm_output_keys: # Optional, list of top-level keys expected in JSON output
-  - "key1_from_llm"
-  - "key2_from_llm"
+expected_llm_output_keys: # Optional, list of keys expected in JSON output
+  - "top_level_key"
+  - "parent_object.nested_key"
+  - "another_parent.child.grandchild_key"
 ```
 
 **Key Fields:**
 
 *   `role_name` (string, mandatory): The unique identifier for the role. This is used to load the role.
+*   `author` (string, optional): The creator or maintainer of the role definition (e.g., "SkyscopeAI/Jules", "YourName").
+*   `version` (string, optional): The version of the role definition (e.g., "1.0.0", "1.1.0-alpha"). Useful for tracking changes to role prompts and structures.
 *   `description` (string, optional): Helps users understand the role's purpose.
+*   `tags` (list of strings, optional): Keywords or tags for categorizing or filtering roles (e.g., `["analysis", "security", "python_coding"]`).
 *   `system_prompt` (string, mandatory): The core instruction given to the LLM, defining its persona, task, and any specific output requirements. Multi-line YAML strings (using `|`) are recommended for readability.
     *   The `system_prompt` can include dynamic placeholders (e.g., `{item_path}`, `{item_type}`, `{language}`, `{task_description}`, `{existing_code_context}`). These placeholders are automatically replaced with actual values by the system when the role is used, allowing for more context-specific prompts. For example, a role for analyzing files might use: `Analyze the {item_type} at '{item_path}'.`
 *   `model_name` (string, optional): If specified, this role will use this Ollama model, overriding the global default model (`AIOS_DEFAULT_MODEL` or the default in `config.py`).
 *   `knowledge_base_keywords` (list of strings, optional): A list of keywords. If provided, the system will attempt to load corresponding `.txt` files from the `knowledge_base/keywords/` directory to augment the LLM's context when this role is active.
 *   `output_format` (string, optional): Specifies the expected format of the LLM's response. Common values are `"json"` (if structured data is required, in which case the `system_prompt` should detail the JSON schema) or `"text"` (for free-form textual output). The default behavior in the application might vary by function if this is not set (e.g., analysis functions typically default to expecting JSON).
-*   `expected_llm_output_keys` (list of strings, optional): If `output_format` is `json`, this field can list top-level keys that the LLM's JSON response is expected to contain. The system will validate the presence of these keys. This helps ensure the LLM adheres to the desired output structure.
+*   `expected_llm_output_keys` (list of strings, optional): If `output_format` is `json`, this field can list top-level or dot-notated nested keys (e.g., `"risk_assessment.risk_level"`) that the LLM's JSON response is expected to contain. The system will validate the presence of these keys, helping to ensure the LLM adheres to the desired output structure.
 
 ### Default Roles
 
 The system currently includes the following predefined roles:
 
-*   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` (using `{item_path}` and `{item_type}` placeholders) guides the LLM to identify issues and suggest enhancements for individual items. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
+*   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` uses `{item_path}` and `{item_type}` placeholders to guide the LLM. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
 *   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks, which can now include `shell_task` types for system-level operations. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
 *   **`ShellCommandGenerator`**: Translates natural language tasks (often proposed by the `EnhancementStrategist` as a `shell_task`) into specific shell command suggestions, including a structured risk assessment, prerequisites, safety notes, and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
-*   **`PythonCodeGenerator`**: Specializes in generating Python code snippets based on a task description. Uses placeholders for `language`, `task_description`, and `existing_code_context`. Expects JSON output with a `code` field. (See `ai_os_enhancer/roles/python_code_generator.yaml`)
+*   **`PythonCodeGenerator`**: Specializes in generating Python code snippets based on a task description. Uses placeholders for `{language}`, `{task_description}`, and `{existing_code_context}` in its prompt. Expects JSON output with a `code` field. (See `ai_os_enhancer/roles/python_code_generator.yaml`)
 
 These files serve as examples of how to structure role configurations.
 
