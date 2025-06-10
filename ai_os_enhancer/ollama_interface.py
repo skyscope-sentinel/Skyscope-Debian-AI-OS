@@ -54,7 +54,7 @@ def _format_data_as_text(data):
             return json.dumps(data, indent=2, sort_keys=True) # Added sort_keys for consistency
         except TypeError:
             logger.warning(f"Could not JSON serialize data of type {type(data)}, falling back to str().")
-            return str(data) 
+            return str(data)
     return str(data)
 
 
@@ -66,7 +66,7 @@ def query_ollama(prompt_text, model_name=None, context_data=None, is_json_respon
     """
     if model_name is None:
         model_name = config.DEFAULT_MODEL
-    
+
     full_prompt = prompt_text
     if context_data:
         # Ensure context_data is formatted nicely for inclusion in the prompt
@@ -86,7 +86,7 @@ def query_ollama(prompt_text, model_name=None, context_data=None, is_json_respon
     log_payload_prompt = payload['prompt']
     if len(log_payload_prompt) > 300: # Log only a part of very long prompts
         log_payload_prompt = log_payload_prompt[:150] + "..." + log_payload_prompt[-150:]
-    
+
     logger.debug(f"Sending query to Ollama. Model: {model_name}, JSON expected: {is_json_response_expected}, API: {config.OLLAMA_API_ENDPOINT}")
     logger.debug(f"Payload (prompt excerpt): {json.dumps({**payload, 'prompt': log_payload_prompt})}")
 
@@ -96,7 +96,7 @@ def query_ollama(prompt_text, model_name=None, context_data=None, is_json_respon
         response.raise_for_status()
 
         response_data = response.json() # Main response from Ollama API
-        
+
         raw_response_text = response_data.get("response")
 
         if raw_response_text is None: # Should not happen if API call was successful
@@ -180,9 +180,9 @@ def analyze_system_item(item_content, item_path, item_type, model_name=None):
     full_prompt_parts = []
     if knowledge_base_text:
         full_prompt_parts.append("You are provided with the following expert guide for context. Prioritize this guide when forming your analysis and suggestions:\n--- EXPERT GUIDE START ---\n" + knowledge_base_text + "\n--- EXPERT GUIDE END ---\n\n")
-    
+
     full_prompt_parts.append(prompt_intro_text)
-    
+
     json_format_instruction = (
         "Your response MUST be a single, valid JSON object. Ensure all strings are properly escaped. The JSON object should have these top-level keys: "
         "'analysis_summary' (a concise string summarizing your findings), "
@@ -196,9 +196,9 @@ def analyze_system_item(item_content, item_path, item_type, model_name=None):
         "Focus on enhancing stability, security, performance, and maintainability. If no issues or ideas, return empty lists for 'potential_issues' and 'enhancement_ideas'."
     )
     full_prompt_parts.append(json_format_instruction)
-    
+
     prompt = "".join(full_prompt_parts)
-    
+
     logger.info(f"Requesting analysis for {item_type} at {item_path} using model {model_name}.")
     return query_ollama(prompt, model_name, is_json_response_expected=True)
 
@@ -215,10 +215,10 @@ def conceive_enhancement_strategy(system_snapshot, analysis_results_list, model_
     # Check if sysctl related items are in the analysis results
     has_sysctl_context = any(
         isinstance(result.get("item_path"), str) and \
-        ("sysctl.conf" in result.get("item_path", "") or "/etc/sysctl.d/" in result.get("item_path", "")) 
+        ("sysctl.conf" in result.get("item_path", "") or "/etc/sysctl.d/" in result.get("item_path", ""))
         for result in analysis_results_list
     )
-    
+
     if has_sysctl_context:
         knowledge_base_text = _load_knowledge_base_content("sysctl_debian_guide.txt")
 
@@ -233,7 +233,7 @@ def conceive_enhancement_strategy(system_snapshot, analysis_results_list, model_
     )
     prompt_parts.append(f"System Snapshot:\n{_format_data_as_text(system_snapshot)}\n\n")
     prompt_parts.append(f"Analysis of System Items:\n{_format_data_as_text(analysis_results_list)}\n\n")
-    
+
     # Rest of the instructions for the prompt
     prompt_instructions = (
         "Instructions for your response: Your response MUST be a single, valid JSON object. Ensure all strings are properly escaped. "
@@ -253,7 +253,7 @@ def conceive_enhancement_strategy(system_snapshot, analysis_results_list, model_
         "If no enhancements are deemed necessary, 'prioritized_enhancements' should be an empty list."
     )
     prompt_parts.append(prompt_instructions)
-    
+
     prompt = "".join(prompt_parts)
 
     logger.info(f"Requesting enhancement strategy using model {model_name}.")
@@ -300,7 +300,7 @@ def generate_code_or_modification(task_description, language, existing_code_cont
             f"Ensure the code is robust, secure, and follows best practices for {language} on Debian. "
             f"The output should be the raw code itself."
         )
-    
+
     logger.info(f"Requesting code generation/modification for language '{language}' using model '{model_name}'. Task: {task_description}")
     # For code generation, we expect raw text, not JSON.
     return query_ollama(prompt, model_name, is_json_response_expected=False)
@@ -349,7 +349,7 @@ if __name__ == '__main__':
         logger.info(f"Mock script analysis (Test 3): {json.dumps(script_analysis_result, indent=2)}")
     else:
         logger.error("Failed to get script analysis for Test 3.")
-    
+
     # Test 4: Analyze system item (config)
     logger.info("Test 4: analyze_system_item (config - generic)...")
     mock_config_content = "# Sample config\nTIMEOUT=30\nUSER=admin\n# Check this old_setting\nOLD_SETTING=true"
@@ -377,19 +377,19 @@ if __name__ == '__main__':
     mock_analysis_results_for_strategy = []
     if script_analysis_result and isinstance(script_analysis_result.get("enhancement_ideas"), list): # Use result from Test 3
          mock_analysis_results_for_strategy.append({
-             "item_path": "/tmp/mock_script.sh", "item_type": "script", 
+             "item_path": "/tmp/mock_script.sh", "item_type": "script",
              "analysis_summary": script_analysis_result.get("analysis_summary"),
              "potential_issues": script_analysis_result.get("potential_issues"),
              "enhancement_ideas": script_analysis_result.get("enhancement_ideas")
         })
     if sysctl_analysis_result and isinstance(sysctl_analysis_result.get("enhancement_ideas"), list): # Use result from Test 4b
          mock_analysis_results_for_strategy.append({
-             "item_path": "/etc/sysctl.conf", "item_type": "config", 
+             "item_path": "/etc/sysctl.conf", "item_type": "config",
              "analysis_summary": sysctl_analysis_result.get("analysis_summary"),
              "potential_issues": sysctl_analysis_result.get("potential_issues"),
              "enhancement_ideas": sysctl_analysis_result.get("enhancement_ideas")
         })
-    
+
     if not mock_analysis_results_for_strategy: # Fallback if previous analyses failed
         logger.warning("Using fallback analysis results for conceive_enhancement_strategy test as prior analyses might have failed.")
         mock_analysis_results_for_strategy.append({"item_path": "/etc/some.conf", "item_type": "config", "analysis_summary": "Outdated setting", "potential_issues": ["Security risk"], "enhancement_ideas": [{"idea_description": "Update setting X", "justification": "Improves security", "suggested_change_type": "modify_config_line", "target_pattern": "X=old", "new_code_snippet": "X=new"}]})
@@ -414,11 +414,11 @@ if __name__ == '__main__':
     python_modification_task = "Refactor the following Python code to use an f-string for printing the message."
     existing_python_code = "message = 'Hello, World!'\nprint('Message: ' + message)"
     modification_details = {
-        "type": "refactor_string_concatenation", 
+        "type": "refactor_string_concatenation",
         "target_construct": "string concatenation with '+' for print",
         "desired_construct": "f-string"
     }
-    
+
     modified_python_code = generate_code_or_modification(
         task_description=python_modification_task,
         language="python",
@@ -429,6 +429,6 @@ if __name__ == '__main__':
         logger.info(f"Modified python code (Test 7):\n{modified_python_code.strip()}")
     else:
         logger.error("Failed to generate modified python code for Test 7.")
-        
+
     logger.info("--- End of OllamaInterface Test ---")
 ```

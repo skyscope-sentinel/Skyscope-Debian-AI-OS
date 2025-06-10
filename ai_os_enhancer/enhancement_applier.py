@@ -120,23 +120,23 @@ def execute_in_docker_sandbox(script_content, language, docker_image_name="debia
             interpreter_in_container, # Command to run
             script_path_in_container  # Argument to the command (the script)
         ]
-        
+
         logger.info(f"Executing Docker command: {' '.join(shlex.quote(str(p)) for p in docker_command)}")
 
         # 5. Execute Docker Command
         process = subprocess.run(docker_command, capture_output=True, text=True, check=False, timeout=timeout_seconds)
-        
+
         success = process.returncode == 0
         output = process.stdout.strip() if process.stdout else ""
         error_output = process.stderr.strip() if process.stderr else ""
-        
+
         log_output = output[:200] + ('...' if len(output) > 200 else '')
         log_error = error_output[:200] + ('...' if len(error_output) > 200 else '')
 
         if output: logger.debug(f"Docker execution stdout: {log_output}")
         if error_output: logger.warning(f"Docker execution stderr: {log_error}")
         logger.info(f"Docker execution result: Success={success}, ExitCode={process.returncode} (from script inside Docker)")
-        
+
         return {"success": success, "output": output, "error": error_output, "exit_code": process.returncode}
 
     except subprocess.TimeoutExpired:
@@ -169,7 +169,7 @@ def backup_file(file_path_str):
     try:
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") # Added %f for microseconds
         abs_file_path = file_path.resolve()
-        
+
         # Determine path relative to root or a known base if possible, to avoid overly deep backup structures
         # For simplicity, if path is absolute, take path components after anchor
         try:
@@ -180,9 +180,9 @@ def backup_file(file_path_str):
         backup_target_dir = config.BACKUP_BASE_PATH
         for part in relative_path_parts[:-1]: # All parts except filename
              backup_target_dir = backup_target_dir / part
-        
+
         os.makedirs(backup_target_dir, exist_ok=True)
-        
+
         backup_filename = f"{abs_file_path.name}.{timestamp}.bak"
         backup_path = backup_target_dir / backup_filename
 
@@ -216,7 +216,7 @@ def apply_config_text_change(file_path_str, old_content_snippet, new_content, ba
     Modes: "APPEND_MODE", "PREPEND_MODE", "OVERWRITE_MODE", or replaces first occurrence.
     """
     logger.info(f"Attempting to apply config text change to: {file_path_str} (Mode/Snippet: '{old_content_snippet[:50]}{'...' if len(old_content_snippet)>50 else ''}')")
-    
+
     # For OVERWRITE_MODE, we don't need to read current content if the file might not exist.
     # However, for other modes, reading is essential.
     if old_content_snippet != "OVERWRITE_MODE" and not os.path.exists(file_path_str):
@@ -271,7 +271,7 @@ def apply_script_modification(script_path_str, modification_details, ai_generate
     """
     mod_type = modification_details.get("type")
     logger.info(f"Attempting to apply script modification to: {script_path_str} with type: {mod_type}")
-    
+
     current_script_content = system_analyzer.read_file_content(script_path_str)
     if current_script_content is None:
         logger.error(f"Cannot read script {script_path_str} for modification.")
@@ -296,7 +296,7 @@ def apply_script_modification(script_path_str, modification_details, ai_generate
         # And accounts for functions possibly ending not at start of line for '}'
         pattern_str = r"(?:^|\s)(?:function\s+)?(" + re.escape(func_name) + r")\s*\(\s*\)\s*\{((?:[^{}]|\{[^{}]*\})*)\}"
         pattern = re.compile(pattern_str, re.MULTILINE | re.DOTALL)
-        
+
         match = pattern.search(current_script_content)
         if match:
             # Replace the body of the function, keeping the declaration style somewhat similar if possible.
@@ -324,7 +324,7 @@ def apply_script_modification(script_path_str, modification_details, ai_generate
                 else:
                     logger.info(f"Bash script syntax check passed for {script_path_str}.")
             # Add elif for python -m py_compile script_path_str etc. for other languages
-            
+
             if not syntax_check_passed:
                 logger.error(f"Rolling back script {script_path_str} due to syntax errors.")
                 if backup_path_provided and os.path.exists(backup_path_provided):
@@ -385,15 +385,15 @@ def execute_command_or_script(command_string, script_content=None, language=None
             fd, temp_script_file = tempfile.mkstemp(suffix=suffix, text=True)
             os.write(fd, script_content.encode('utf-8'))
             os.close(fd)
-            
+
             interpreter_map = {"bash": "/bin/bash", "python": "/usr/bin/python3"} # Extendable
             interpreter = interpreter_map.get(language.lower())
-            
+
             if not interpreter:
                 logger.error(f"Unsupported script language for execution: {language}")
                 if temp_script_file: os.remove(temp_script_file)
                 return {"success": False, "output": "", "error": f"Unsupported language: {language}", "exit_code": -1}
-            
+
             if language.lower() in ["bash", "sh"]: # Only make executable if it's a shell script
                 os.chmod(temp_script_file, 0o755)
 
@@ -416,7 +416,7 @@ def execute_command_or_script(command_string, script_content=None, language=None
     try:
         logger.debug(f"Executing command list: {exec_command_list}")
         process = subprocess.run(exec_command_list, capture_output=True, text=True, check=False, timeout=60)
-        
+
         success = process.returncode == 0
         output = process.stdout.strip() if process.stdout else ""
         error_output = process.stderr.strip() if process.stderr else ""
@@ -427,9 +427,9 @@ def execute_command_or_script(command_string, script_content=None, language=None
         if output: logger.debug(f"Command stdout: {log_output}")
         if error_output: logger.warning(f"Command stderr: {log_error}") # stderr isn't always an error
         logger.info(f"Execution result for '{' '.join(exec_command_list)}': Success={success}, ExitCode={process.returncode}")
-        
+
         return {"success": success, "output": output, "error": error_output, "exit_code": process.returncode}
-    
+
     except FileNotFoundError:
         cmd_not_found = exec_command_list[0] if exec_command_list else "Unknown"
         logger.error(f"Command not found: {cmd_not_found}")
@@ -462,7 +462,7 @@ def rollback_change(backup_file_path_str, original_file_path_str):
     if not backup_file_path.exists():
         logger.error(f"Backup file not found, cannot rollback: {backup_file_path}")
         return False
-    
+
     try:
         original_file_path.parent.mkdir(parents=True, exist_ok=True)
         # Use copy2 to preserve metadata, and ensure original is overwritten
@@ -486,20 +486,20 @@ def create_new_file(file_path_str, content, make_executable=False):
             logger.info(f"Successfully created new file: {file_path}")
             if make_executable:
                 try:
-                    os.chmod(file_path, 0o755) 
+                    os.chmod(file_path, 0o755)
                     logger.info(f"Made file executable: {file_path}")
                 except Exception as e:
                     logger.error(f"Failed to make file executable {file_path}: {e}", exc_info=True)
                     # Depending on requirements, this might or might not be a fatal error for create_new_file
                     # For now, let's say if we want it executable, it must become executable.
                     # Consider removing the file if chmod fails and it's critical?
-                    return False 
+                    return False
             return True
         else:
             # _write_file_content already logs the error
             logger.error(f"Failed to write content during creation of new file: {file_path}")
             return False
-            
+
     except Exception as e: # Catch any other unexpected errors during path handling etc.
         logger.error(f"Error creating new file {file_path}: {e}", exc_info=True)
         return False
@@ -517,13 +517,13 @@ if __name__ == '__main__':
 
     test_dir_name = "enhancement_applier_test_area"
     test_dir = config.PROJECT_ROOT / test_dir_name
-    
+
     # Define backup base for test area to avoid polluting main backup area if path logic is tricky
     original_backup_base_path = config.BACKUP_BASE_PATH
     config.BACKUP_BASE_PATH = config.PROJECT_ROOT / "temp_backups_for_test" / test_dir_name
-    
+
     if os.path.exists(test_dir):
-        shutil.rmtree(test_dir) 
+        shutil.rmtree(test_dir)
     if os.path.exists(config.BACKUP_BASE_PATH): # Clean specific test backup area
         shutil.rmtree(config.BACKUP_BASE_PATH)
 
@@ -553,7 +553,7 @@ if __name__ == '__main__':
     config_backup_path = backup_file(str(dummy_config_path))
     assert config_backup_path and os.path.exists(config_backup_path), "Config backup failed or backup file not found."
     logger.info(f"Config backup created at: {config_backup_path}")
-    
+
     script_backup_path = backup_file(str(dummy_script_path))
     assert script_backup_path and os.path.exists(script_backup_path), "Script backup failed or backup file not found."
     logger.info(f"Script backup created at: {script_backup_path}")
@@ -563,15 +563,15 @@ if __name__ == '__main__':
     success_replace = apply_config_text_change(str(dummy_config_path), "SettingB=2", "SettingB=newValue", config_backup_path)
     assert success_replace and "SettingB=newValue" in system_analyzer.read_file_content(str(dummy_config_path)), "Config replace failed."
     logger.info(f"apply_config_text_change (replace SettingB): Success, content verified.")
-    
+
     success_append = apply_config_text_change(str(dummy_config_path), "APPEND_MODE", "AppendedSetting=XYZ", config_backup_path)
     assert success_append and "AppendedSetting=XYZ" in system_analyzer.read_file_content(str(dummy_config_path)), "Config append failed."
     logger.info(f"apply_config_text_change (append): Success, content verified.")
-    
+
     success_prepend = apply_config_text_change(str(dummy_config_path), "PREPEND_MODE", "PrependedSetting=ABC", config_backup_path)
     assert success_prepend and "PrependedSetting=ABC" in system_analyzer.read_file_content(str(dummy_config_path)), "Config prepend failed."
     logger.info(f"apply_config_text_change (prepend): Success, content verified.")
-        
+
     success_overwrite = apply_config_text_change(str(dummy_config_path), "OVERWRITE_MODE", "ENTIRELY NEW CONTENT", config_backup_path)
     assert success_overwrite and system_analyzer.read_file_content(str(dummy_config_path)) == "ENTIRELY NEW CONTENT", "Config overwrite failed."
     logger.info(f"apply_config_text_change (overwrite): Success, content verified.")
@@ -588,10 +588,10 @@ if __name__ == '__main__':
     success_script_mod_all = apply_script_modification(str(dummy_script_path), mod_details_replace_all, new_script_content, script_backup_path)
     assert success_script_mod_all and system_analyzer.read_file_content(str(dummy_script_path)) == new_script_content, "Script replace_entire_script failed."
     logger.info(f"apply_script_modification (replace_entire_script): Success, content verified.")
-    
+
     assert rollback_change(script_backup_path, str(dummy_script_path)), "Failed to rollback script for function test."
     logger.info(f"Rolled back script to V1 for function replacement test. Content:\n{system_analyzer.read_file_content(str(dummy_script_path))}")
-    
+
     mod_details_replace_func = {"type": "replace_bash_function", "function_name": "my_function", "language": "bash"}
     new_func_code = "my_function() {\n    echo \"Inside my_function MODIFIED\"\n    echo \"Another line\"\n}"
     success_script_mod_func = apply_script_modification(str(dummy_script_path), mod_details_replace_func, new_func_code, script_backup_path)
@@ -603,7 +603,7 @@ if __name__ == '__main__':
     logger.info("\n--- Testing script modification with syntax error & rollback ---")
     assert rollback_change(script_backup_path, str(dummy_script_path)), "Failed to rollback script for syntax error test."
     logger.info(f"Rolled back script to V1 for syntax error test.")
-        
+
     mod_details_syntax_error = {"type": "append_to_script", "language": "bash"}
     code_with_syntax_error = "\necho 'Valid line before error'\nif then else fi # obvious syntax error"
     success_syntax_error = apply_script_modification(str(dummy_script_path), mod_details_syntax_error, code_with_syntax_error, script_backup_path)
@@ -617,7 +617,7 @@ if __name__ == '__main__':
     exec_result_ls = execute_command_or_script(f"ls -a {shlex.quote(str(test_dir))}") # Use -a to see . and ..
     assert exec_result_ls["success"] and dummy_config_name in exec_result_ls["output"], f"ls command failed or output incorrect: {exec_result_ls}"
     logger.info(f"execute_command_or_script (ls -a): Success, output verified.")
-    
+
     exec_result_script_file = execute_command_or_script(f"/bin/bash {shlex.quote(str(dummy_script_path))}") # Current content is V1
     assert exec_result_script_file["success"] and "Original Script Version 1" in exec_result_script_file["output"] and "Inside my_function original" in exec_result_script_file["output"], f"Execution of script V1 failed or output incorrect: {exec_result_script_file}"
     logger.info(f"execute_command_or_script (dummy script file V1): Success, output verified.")
@@ -631,7 +631,7 @@ if __name__ == '__main__':
     exec_result_python_direct = execute_command_or_script(command_string=None, script_content=python_script_content_direct, language="python")
     assert exec_result_python_direct["success"] and "Hello from direct python execution" in exec_result_python_direct["output"], f"Direct python script execution failed: {exec_result_python_direct}"
     logger.info(f"execute_command_or_script (direct python): Success, output verified.")
-    
+
     exec_result_fail = execute_command_or_script("command_does_not_exist_sfsdfsdf")
     assert not exec_result_fail["success"] and exec_result_fail["exit_code"] == -127, f"Non-existent command test failed: {exec_result_fail}"
     logger.info(f"execute_command_or_script (non-existent command): Failed as expected.")
@@ -649,7 +649,7 @@ if __name__ == '__main__':
     assert create_new_file(str(new_script_exe_path), new_script_exe_content, make_executable=True), "create_new_file failed for executable script."
     assert os.path.exists(new_script_exe_path) and os.access(new_script_exe_path, os.X_OK), "New script not executable or not found."
     logger.info(f"create_new_file (executable script): Success, executable permission verified.")
-    
+
     exec_result_new_script = execute_command_or_script(f"/bin/bash {shlex.quote(str(new_script_exe_path))}")
     assert exec_result_new_script["success"] and "Output from newly created executable script" in exec_result_new_script["output"], f"Execution of newly created script failed: {exec_result_new_script}"
     logger.info(f"execute_command_or_script (newly created script): Success, output verified.")
@@ -659,4 +659,3 @@ if __name__ == '__main__':
     logger.info(f"\nTest files and backups are in: {test_dir} and {config.PROJECT_ROOT / 'temp_backups_for_test' / test_dir_name}")
     logger.info("Consider cleaning up test directories manually if needed.")
     logger.info("--- End of EnhancementApplier Test ---")
-

@@ -28,7 +28,7 @@ except ImportError:
 
 def setup_logger(name='ai_os_enhancer_logger', log_level=logging.INFO, log_file=None):
     """Sets up a logger with file and console handlers."""
-    
+
     if log_file is None:
         log_file = LOG_FILE_PATH
 
@@ -72,7 +72,7 @@ def setup_logger(name='ai_os_enhancer_logger', log_level=logging.INFO, log_file=
     ch_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') # Simpler for console
     ch.setFormatter(ch_formatter)
     logger.addHandler(ch)
-    
+
     if not logger.handlers:
         # If no handlers could be added (e.g. file system error and console also failed, though unlikely for console)
         # Fallback to basicConfig to ensure logs are output somewhere
@@ -89,7 +89,7 @@ def setup_basic_logging(level=logging.INFO):
     """
     # Basic configuration, ensuring it's idempotent somewhat by checking root handlers
     if not logging.getLogger().handlers: # Check if root logger has no handlers
-        logging.basicConfig(level=level, 
+        logging.basicConfig(level=level,
                             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                             handlers=[logging.StreamHandler(sys.stdout)])
         logging.getLogger().info(f"Basic logging configured with level {logging.getLevelName(level)}.")
@@ -102,7 +102,7 @@ def setup_basic_logging(level=logging.INFO):
 if __name__ == '__main__':
     # This part is for testing the logger setup independently.
     import sys # Needed for StreamHandler(sys.stdout) in setup_basic_logging if called here
-    
+
     setup_basic_logging(level=logging.DEBUG) # Test the new basic logger
     logging.getLogger("BasicTest").info("Testing basic_logging from logger_setup main.")
 
@@ -125,14 +125,14 @@ if __name__ == '__main__':
     # Test custom logger
     custom_log_file = os.path.join(os.path.dirname(LOG_FILE_PATH), "custom_test_logger.log")
     print(f"Attempting to log to custom file: {custom_log_file}")
-    
+
     logger_custom = setup_logger(name='MyCustomTestLogger', log_level=logging.DEBUG, log_file=custom_log_file)
     logger_custom.debug("This is a DEBUG message from MyCustomTestLogger.")
     logger_custom.info("This is an INFO message from MyCustomTestLogger.")
     logger_custom.warning("This is a WARNING message from MyCustomTestLogger.")
     logger_custom.error("This is an ERROR message from MyCustomTestLogger.")
     logger_custom.critical("This is a CRITICAL message from MyCustomTestLogger.")
-    
+
     print("\nTest logging complete.")
     print(f"Default log file should be at: {LOG_FILE_PATH}")
     print(f"Custom test log file should be at: {custom_log_file}")

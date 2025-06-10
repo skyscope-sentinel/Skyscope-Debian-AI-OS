@@ -54,7 +54,7 @@ This project translates a detailed pseudo code specification into a functional P
 1.  **Clone the repository:**
     ```bash
     git clone <repository_url>
-    cd ai-os-enhancer 
+    cd ai-os-enhancer
     ```
     (Replace `<repository_url>` with the actual URL of this repository)
 
@@ -86,8 +86,9 @@ Before running, review and customize `ai_os_enhancer/config.py`:
     Example:
     ```python
     MONITORED_SCRIPTS_PATHS = [
-        "/home/user/myscripts/backup_script.sh",
-        str(PROJECT_ROOT / "sample_scripts" / "local_test_script.sh") # For scripts within the project
+        "/home/user/myscripts/backup_script.sh", # Example of an external script
+        # Example for a script within the project's example area:
+        str(PROJECT_ROOT / "examples_and_test_scripts" / "sample_scripts_for_orchestrator" / "orchestrator_test_script.sh")
     ]
     ```
 *   **`AIOS_GITHUB_API_KEY`** (Optional): For features that interact with the GitHub API (planned for future development phases), you'll need to provide a GitHub Personal Access Token with appropriate permissions.
@@ -112,6 +113,10 @@ python ai_os_enhancer/main.py
 ```
 
 The application will start, initialize, and begin its enhancement cycles. Follow the console output for logs and any prompts for human approval.
+
+## Code Examples and Test Scripts
+
+The `ai_os_enhancer/examples_and_test_scripts/` directory contains sample scripts and test configurations that were used during development or can serve as examples for understanding certain features (e.g., how `EnhancementApplier` might modify files, or sample scripts for the `Orchestrator` to analyze if configured in `MONITORED_SCRIPTS_PATHS`). You can explore this directory to see concrete examples.
 
 ## Logging
 

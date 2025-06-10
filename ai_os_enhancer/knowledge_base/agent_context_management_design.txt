@@ -1,0 +1,129 @@
+# AI OS Enhancer - Agent Context Management Design (Conceptual)
+
+## 1. Overview
+
+Agent Context Management is crucial for the AI OS Enhancer to learn from its actions, avoid repeating mistakes, make more informed decisions over time, and provide a clear audit trail. This document outlines the conceptual design for managing this context.
+
+## 2. Types of Contextual Information
+
+The agent should capture and utilize various types of information:
+
+*   **A. System State Snapshots (Historical):**
+    *   **Content:** Periodic captures of OS version, kernel details, installed packages, running services, resource usage (CPU, memory, disk), checksums or versions of critical configuration files, and key settings from monitored files.
+    *   **Format:** Timestamped JSON objects or entries in a time-series database.
+    *   **Purpose:** Track system evolution, identify drift, correlate agent actions with changes in system state, provide historical context for new analyses.
+    *   **Example:** A snapshot taken before and after a set of enhancements.
+
+*   **B. Applied Enhancements History:**
+    *   **Content:** A detailed log for every enhancement attempted or applied. This includes:
+        *   Timestamp (start and end of operation).
+        *   Target item path and type (config/script).
+        *   Summary of the proposed change.
+        *   Full `proposed_change_details` JSON object from the LLM's plan.
+        *   If applicable, the actual diff or content applied.
+        *   LLM model name and version used for the suggestion.
+        *   Human approval status (approved, rejected, auto-approved).
+        *   Outcome: success, failure (with error message/type), rollback initiated.
+        *   System stability score before and after the attempt.
+        *   Backup file path (if any).
+    *   **Format:** Structured log entries, ideally in a database (e.g., SQLite) or as individual JSON files per attempt.
+    *   **Purpose:** Audit trail, learning which types of changes are successful/problematic, rollback reference, preventing re-application of known bad changes, feedback loop for LLM strategy.
+
+*   **C. LLM Interaction Logs:**
+    *   **Content:** Verbatim prompts sent to the LLM for analysis, strategy conception, and code generation. Raw and parsed/structured responses received from the LLM.
+    *   **Format:** JSON files or database entries, linking interactions to specific enhancement attempts or analysis tasks.
+    *   **Purpose:** Debugging LLM interactions, refining prompt engineering, understanding LLM reasoning/failure modes, potential for future LLM fine-tuning.
+
+*   **D. Knowledge Base (KB) Usage Context:**
+    *   **Content:** Record which knowledge base files (and potentially versions/checksums) were consulted or provided to the LLM for specific tasks.
+    *   **Purpose:** Understanding the impact of KBs on LLM performance, auditing information sources.
+
+*   **E. System Stability Score History:**
+    *   **Content:** Timestamped log of the `system_stability_score`, along with a brief note on the trigger for any significant change (e.g., "post-enhancement X", "service Y failed").
+    *   **Format:** Time-series data or simple log.
+    *   **Purpose:** Correlate system stability with agent actions or external events.
+
+*   **F. Human Feedback and Annotations:**
+    *   **Content:**
+        *   Reasons provided by humans for rejecting suggestions.
+        *   Annotations or corrections for applied changes (e.g., "This worked, but also needed X").
+        *   Alternative solutions suggested by humans.
+    *   **Format:** Structured data linked to specific enhancement proposals in the history.
+    *   **Purpose:** Direct input for the agent's learning process, refining LLM behavior and suggestion quality.
+
+*   **G. Operational Error Log:**
+    *   **Content:** Categorized log of errors encountered by the agent's own internal processes (e.g., script execution failures by `EnhancementApplier`, API errors not related to LLM, file parsing errors).
+    *   **Purpose:** Self-diagnosis, identifying unreliable internal tools or external dependencies.
+
+*   **H. Learned Parameters/Heuristics (Advanced - Future Scope):**
+    *   **Content:** Agent-derived rules or weighted parameters, e.g., "Applying changes to `X.conf` typically requires restarting service `Y`," or "Model `A` is generally better for Bash script refactoring than model `B`."
+    *   **Format:** Could be a simple rule engine, a set of configuration files, or parameters in a database.
+    *   **Purpose:** Enable adaptive behavior, improve efficiency, and increase the success rate of enhancements over time.
+
+## 3. Storage Mechanisms
+
+A hybrid approach is recommended:
+
+*   **File System (JSON/Text Logs):**
+    *   **Location:** `ai_os_enhancer/data/db/context/`
+    *   **Usage:**
+        *   `enhancements_log/`: Individual JSON files per enhancement attempt (e.g., `enh_YYYYMMDDHHMMSS_path_hash.json`).
+        *   `llm_interactions_log/`: Individual JSON files per significant LLM query/response.
+        *   `system_snapshots/`: Timestamped JSON files for system state snapshots.
+        *   `operational_errors.log`: Plain text or structured log for agent's internal errors.
+    *   **Pros:** Simple to implement initially, human-readable.
+    *   **Cons:** Can be harder to query complex relationships, managing many small files.
+
+*   **SQLite Database:**
+    *   **Location:** `ai_os_enhancer/data/db/agent_context.sqlite`
+    *   **Usage:** Ideal for structured, queryable data:
+        *   Table for `AppliedEnhancementsHistory` (linking to file-based logs for full details if needed).
+        *   Table for `SystemStabilityScoreHistory`.
+        *   Table for `HumanFeedback`.
+    *   **Pros:** Robust querying, data integrity, relationships between data points.
+    *   **Cons:** Requires schema design and ORM/SQL interaction.
+
+*   **Vector Database (Future Consideration):**
+    *   For enabling semantic search over textual context (knowledge bases, LLM interactions, human feedback).
+
+## 4. Context Management Logic
+
+This logic would primarily reside in the `Orchestrator` or a dedicated `ContextManager` module.
+
+*   **Loading Context:**
+    *   At startup, load critical context:
+        *   List of recently failed/rolled-back enhancements (to avoid immediate re-attempts).
+        *   Last known system stability score.
+        *   (Advanced) User-defined policies or preferences.
+
+*   **Saving Context:**
+    *   Atomically or robustly save relevant context after each key step (e.g., after an enhancement attempt, after an LLM interaction, after a health check).
+
+*   **Utilizing Context in Prompts (Examples):**
+    *   **Analysis:** "This script was last analyzed on YYYY-MM-DD. Previous analysis by model X noted Y. Human feedback Z was provided. Current checksum is A, previous was B."
+    *   **Conception:** "Recent enhancement attempts for similar items include: [summary of attempt 1: outcome, stability change], [summary of attempt 2: outcome, stability change]. Avoid strategies that led to rollbacks or significant stability drops unless explicitly justified for a different scenario."
+    *   **Code Generation:** "Previously, for task 'ABC', you generated code 'XYZ' which was successful. For this similar task 'DEF', maintain a similar style/approach unless specified otherwise."
+
+*   **Context Pruning & Summarization:**
+    *   Implement strategies for managing context growth:
+        *   Archive raw logs (e.g., full LLM responses) after a defined period, keeping summaries.
+        *   For very long histories, use summarization techniques (potentially LLM-based) to condense older context before including it in new prompts.
+        *   Prioritize recent and highly relevant context (e.g., context related to the specific file/service being worked on).
+
+*   **Error Handling:**
+    *   Failures in loading/saving context should be logged.
+    *   The agent should be able to operate with partial or no historical context, though its effectiveness might be reduced. Critical context failures might necessitate human intervention.
+
+## 5. Initial Implementation Focus (Simplified)
+
+For the initial implementation, focus on:
+
+1.  **Applied Enhancements History:** Store as individual JSON files in `data/db/context/enhancements_log/`.
+    *   Include: timestamp, item_path, item_type, a summary of the LLM's suggestion (e.g., `idea_description`, `proposed_change_details.type`), human approval status, outcome (success/failure/rollback), backup path.
+2.  **LLM Interaction Snippets:** Key prompts and LLM response summaries (or full responses if manageable) in `data/db/context/llm_interactions_log/`.
+3.  **Orchestrator Logic:**
+    *   At startup, scan `enhancements_log/` to identify paths of enhancements that recently failed or were rolled back. Temporarily (e.g., for the current session or a few cycles) deprioritize these specific changes if the LLM suggests them again.
+    *   When constructing prompts for `ollama_interface.conceive_enhancement_strategy`, include a small, summarized list of the last N (e.g., 3-5) significant enhancement *outcomes* (e.g., "Applied change X to Y: Success", "Attempted change A to B: Rolled back due to syntax error").
+
+This provides a foundational context mechanism that can be expanded upon.
+```

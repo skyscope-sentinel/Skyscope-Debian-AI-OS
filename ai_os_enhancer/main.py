@@ -11,7 +11,7 @@ if __package__ is None and not hasattr(sys, 'frozen'):
     # Resolve the path to the 'ai_os_enhancer' directory itself
     current_file_path = os.path.abspath(__file__)
     ai_os_enhancer_dir = os.path.dirname(current_file_path)
-    
+
     # The parent of 'ai_os_enhancer' dir should be in sys.path for `from ai_os_enhancer import ...` to work
     project_root_dir = os.path.dirname(ai_os_enhancer_dir)
 
@@ -21,7 +21,7 @@ if __package__ is None and not hasattr(sys, 'frozen'):
 # Now that sys.path is potentially adjusted, try importing package components
 from ai_os_enhancer import orchestrator
 from ai_os_enhancer import logger_setup
-from ai_os_enhancer import config 
+from ai_os_enhancer import config
 
 def main():
     """
@@ -33,7 +33,7 @@ def main():
     # For setup_basic_logging, it's usually a simple console logger.
     # Let's assume config.LOG_LEVEL could define the overall default level.
     log_level_from_config = getattr(config, 'GLOBAL_LOG_LEVEL', logging.INFO)
-    logger_setup.setup_basic_logging(level=log_level_from_config) 
+    logger_setup.setup_basic_logging(level=log_level_from_config)
 
     # Get a logger for main.py after basic setup.
     # Note: logger_setup.setup_logger() creates more sophisticated loggers (file+console)

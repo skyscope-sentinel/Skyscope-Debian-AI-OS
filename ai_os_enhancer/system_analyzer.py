@@ -47,9 +47,9 @@ def _execute_command(command_string):
             cmd_list = command_string
         else:
             cmd_list = shlex.split(command_string)
-            
+
         process = subprocess.run(cmd_list, capture_output=True, text=True, check=False)
-        
+
         # Log stdout/stderr only if they are not excessively long
         stdout_log = process.stdout.strip()
         stderr_log = process.stderr.strip()
@@ -135,16 +135,16 @@ def get_service_status(service_name):
     if not service_name or not all(c.isalnum() or c in ['-', '_', '.'] for c in service_name):
         logger.error(f"Invalid service name format: {service_name}")
         return None # Or raise ValueError
-        
+
     stdout, stderr, return_code = _execute_command(f"systemctl is-active {service_name}")
-    
+
     # systemctl is-active:
     # - If active: stdout is "active", RC is 0.
     # - If inactive: stdout is "inactive", RC is non-zero (usually 3).
     # - If failed: stdout is "failed", RC is non-zero (usually 3).
     # - If service not found: stdout is empty (or "unknown"), stderr may have "Unit SERVICE_NAME not found.", RC non-zero.
     # - If status is "activating", "deactivating": stdout is that status, RC 0.
-    
+
     if stdout: # stdout often contains the direct status
         return stdout.strip()
     else:
@@ -208,7 +208,7 @@ def get_file_owner(file_path_str):
         if not file_path.exists():
             logger.warning(f"Path does not exist for owner check: {file_path}")
             return None
-        
+
         stat_info = file_path.stat() # Follows symlinks by default
         uid = stat_info.st_uid
         gid = stat_info.st_gid
@@ -220,8 +220,8 @@ def get_file_owner(file_path_str):
             user_name = pwd.getpwuid(uid).pw_name
         except KeyError: # If UID is not in the system's user database
             logger.warning(f"Could not find username for UID {uid} (path: {file_path})")
-            user_name = str(uid) 
-        
+            user_name = str(uid)
+
         try:
             group_name = grp.getgrgid(gid).gr_name
         except KeyError: # If GID is not in the system's group database
@@ -258,7 +258,7 @@ def list_key_config_and_script_areas():
         {"name": "LogRotation", "type": "config", "paths_patterns": ["/etc/logrotate.conf", "/etc/logrotate.d/*"], "heuristic": "Log management"},
         {"name": "UserManagement", "type": "config", "paths_patterns": ["/etc/passwd", "/etc/shadow", "/etc/group", "/etc/sudoers", "/etc/sudoers.d/*"], "heuristic": "User accounts and privileges"},
     ]
-    
+
     expanded_areas = []
     for area_def in base_configs_definitions:
         current_paths = []
@@ -272,13 +272,13 @@ def list_key_config_and_script_areas():
                 elif "*" not in pattern and "?" not in pattern and "[" not in pattern:
                     # If it's a specific path (not a glob) and not found, still add it.
                     # The AI might want to know about its absence or create it.
-                    current_paths.append(pattern) 
+                    current_paths.append(pattern)
                     logger.debug(f"Specific path {pattern} not found, but added to check list for area {area_def['name']}.")
                 else:
                     logger.debug(f"Glob pattern {pattern} in area {area_def['name']} yielded no results.")
             except Exception as e:
                 logger.error(f"Error during globbing pattern {pattern} for area {area_def['name']}: {e}")
-        
+
         if current_paths:
             expanded_areas.append({
                 "name": area_def["name"],
@@ -303,7 +303,7 @@ def list_key_config_and_script_areas():
                 })
             else:
                 logger.warning(f"Monitored script path from config not found or not a file: {script_path_str}. It will not be added to key areas.")
-    
+
     return expanded_areas + user_scripts_definitions
 
 
@@ -319,10 +319,10 @@ if __name__ == '__main__':
         logger.info("Logger already initialized. Set level to DEBUG for __main__ block.")
 
     logger.info("--- SystemStateAnalyzer Test ---")
-    
+
     debian_version = get_debian_version()
     logger.info(f"Debian Version: {debian_version if debian_version else 'Not found or error'}")
-    
+
     installed_packages = get_installed_packages()
     if installed_packages:
         logger.info(f"Installed Packages (first 5): {installed_packages[:5]}")
@@ -345,11 +345,11 @@ if __name__ == '__main__':
     try:
         # Ensure parent directory for dummy_file_path exists if it's nested
         dummy_file_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         with open(dummy_file_path, "w", encoding="utf-8") as f:
             f.write("Hello, AI OS Enhancer!\nThis is a test file.\nLine 3.")
         logger.info(f"Created dummy file: {dummy_file_path}")
-        
+
         content = read_file_content(str(dummy_file_path))
         if content is not None: # Check for None explicitly
             # Prepare the content for logging to avoid backslash issues in f-string
@@ -357,10 +357,10 @@ if __name__ == '__main__':
             logger.info(f"Dummy file content (first 60 chars): '{log_content}'")
         else:
             logger.error(f"Failed to read dummy file content.")
-        
+
         permissions = get_file_permissions(str(dummy_file_path))
         logger.info(f"Dummy file permissions: {permissions if permissions else 'Error'}")
-        
+
         owner = get_file_owner(str(dummy_file_path))
         logger.info(f"Dummy file owner: {owner if owner else 'Error'}")
 
@@ -412,7 +412,7 @@ if __name__ == '__main__':
              logger.debug(f"  Script Area Details: {script_area}")
     else:
         logger.info("No monitored scripts found or configured in key areas for this test run.")
-    
+
     # Cleanup dummy script if created
     if sample_script_path and sample_script_path.exists():
         os.remove(sample_script_path)

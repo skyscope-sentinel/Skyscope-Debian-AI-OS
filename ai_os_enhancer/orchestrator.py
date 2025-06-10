@@ -36,8 +36,8 @@ else:
 
 class Orchestrator:
     def __init__(self):
-        self.current_enhancements_in_progress = [] 
-        self.system_stability_score = 100.0 
+        self.current_enhancements_in_progress = []
+        self.system_stability_score = 100.0
         self.human_intervention_required = False
         self.is_initialized = False
 
@@ -45,23 +45,23 @@ class Orchestrator:
         """ Helper to log messages intended for user visibility. """
         level_upper = level.upper()
         log_message = f"USER_ALERT ({level_upper}): {message}"
-        
+
         if level_upper == "CRITICAL":
             logger.critical(log_message)
         elif level_upper == "WARNING":
             logger.warning(log_message)
-        elif level_upper == "ERROR": 
+        elif level_upper == "ERROR":
             logger.error(log_message)
-        else: 
+        else:
             logger.info(log_message)
-        
-        print(log_message) 
+
+        print(log_message)
 
 
     def initialize_system(self):
         """ Initializes the AI OS Enhancer system. """
         logger.info("AI OS Enhancer Initializing...")
-        
+
         try:
             paths_to_check = {
                 "Config DB Path": config.CONFIG_DATABASE_PATH,
@@ -72,7 +72,7 @@ class Orchestrator:
                 if not path_obj.exists():
                     logger.warning(f"{name} at {path_obj} not found, attempting to create.")
                     os.makedirs(path_obj, exist_ok=True)
-            
+
             logger.info(f"Using database path: {config.CONFIG_DATABASE_PATH}")
             logger.info(f"Log file configured at: {config.LOG_FILE_PATH}")
             logger.info(f"Backups will be stored under: {config.BACKUP_BASE_PATH}")
@@ -106,14 +106,14 @@ class Orchestrator:
         approval_threshold = str(config.HUMAN_APPROVAL_THRESHOLD).upper()
 
         if approval_threshold == "LOW":
-            needs_approval = True 
+            needs_approval = True
         elif approval_threshold == "MEDIUM":
             if risk in ["MEDIUM", "HIGH"] or impact == "SIGNIFICANT":
                 needs_approval = True
         elif approval_threshold == "HIGH":
             if risk == "HIGH" or (risk == "MEDIUM" and impact == "SIGNIFICANT"):
                 needs_approval = True
-        
+
         if needs_approval:
             proposal_summary = f"Approval for '{item_path_str}'. Risk: {risk}, Impact: {impact}. Justification: {justification}"
             self._log_user_alert(proposal_summary, "WARNING")
@@ -203,22 +203,22 @@ class Orchestrator:
                                         print("--- Proposed New Function Code ---")
                                         print(pre_defined_content)
                                         print("----------------------------------")
-                                        proposed_final_content = None 
+                                        proposed_final_content = None
                                     else:
                                          print(f"\nCould not determine proposed content for script diff from details: {proposed_details}")
-                                
+
                                 if proposed_final_content is not None:
                                     print("\n--- Proposed Change Diff ---")
                                     current_content_lines = current_content.splitlines(keepends=True)
                                     proposed_content_lines = proposed_final_content.splitlines(keepends=True)
-                                    
+
                                     diff_lines = list(difflib.unified_diff(
                                         current_content_lines, proposed_content_lines,
                                         fromfile=f"a/{item_path_str}", tofile=f"b/{item_path_str}", lineterm=""
                                     ))
                                     if diff_lines:
                                         for line_diff_item in diff_lines: # Renamed loop variable
-                                            print(line_diff_item, end='') 
+                                            print(line_diff_item, end='')
                                         if diff_lines and not diff_lines[-1].endswith('\n'):
                                             print()
                                     else:
@@ -232,7 +232,7 @@ class Orchestrator:
             except KeyboardInterrupt:
                 logger.warning(f"Approval process for '{item_path_str}' interrupted by user (Ctrl+C). Assuming rejection.")
                 return False
-            except EOFError: 
+            except EOFError:
                 logger.warning(f"EOFError during input for '{item_path_str}'. Assuming rejection in non-interactive mode.")
                 return False
         else:
@@ -243,7 +243,7 @@ class Orchestrator:
     def monitor_system_health(self):
         """ Placeholder for system health monitoring. """
         logger.debug("Monitoring system health (basic check)...")
-        
+
         critical_services_to_check = getattr(config, 'CRITICAL_SERVICES_MONITOR', ["cron", "ssh"])
         current_stability_penalty = 0
 
@@ -258,16 +258,16 @@ class Orchestrator:
         if current_stability_penalty > 0:
             self.system_stability_score = max(0, self.system_stability_score - current_stability_penalty)
             logger.warning(f"System stability score reduced to {self.system_stability_score:.2f} due to service issues.")
-        elif self.system_stability_score < 100: 
-            self.system_stability_score = min(100, self.system_stability_score + 1) 
+        elif self.system_stability_score < 100:
+            self.system_stability_score = min(100, self.system_stability_score + 1)
             logger.debug(f"System stability score slightly recovered to {self.system_stability_score:.2f}")
 
-        if self.system_stability_score < 50: 
+        if self.system_stability_score < 50:
             alert_msg = f"System stability critically low ({self.system_stability_score:.2f})!"
             logger.critical(alert_msg)
             self._log_user_alert(alert_msg, "CRITICAL")
-            self.human_intervention_required = True 
-        
+            self.human_intervention_required = True
+
         logger.info(f"Current system stability score: {self.system_stability_score:.2f}")
         return self.system_stability_score
 
@@ -275,10 +275,10 @@ class Orchestrator:
     def _format_item_for_analysis(self, item_path_str, item_type):
         """ Helper to read item content and prepare for analysis. """
         item_content = system_analyzer.read_file_content(item_path_str)
-        if item_content is not None: 
+        if item_content is not None:
             return {
                 "path": item_path_str,
-                "content": item_content, 
+                "content": item_content,
                 "type": item_type
             }
         logger.warning(f"Could not read content for {item_type} at {item_path_str}")
@@ -294,10 +294,10 @@ class Orchestrator:
              return
 
         logger.info("--- Starting new enhancement cycle ---")
-        
+
         logger.info("Phase 1: Analyzing System State...")
         items_to_analyze_specs = system_analyzer.list_key_config_and_script_areas()
-        
+
         analysis_tasks_queue = []
         for item_area in items_to_analyze_specs:
             area_type = item_area["type"]
@@ -307,7 +307,7 @@ class Orchestrator:
                     if analysis_task: analysis_tasks_queue.append(analysis_task)
                 else:
                     logger.debug(f"Path {path_str} from spec does not exist, skipping analysis.")
-        
+
         if not analysis_tasks_queue:
             logger.info("No existing items found to analyze in this cycle based on current configuration.")
             logger.info("--- Enhancement cycle ended (no items to analyze) ---")
@@ -316,8 +316,8 @@ class Orchestrator:
         analysis_results_list = []
         max_analyses = config.MAX_CONCURRENT_ANALYSES if hasattr(config, 'MAX_CONCURRENT_ANALYSES') else 1
         logger.info(f"Analyzing up to {max_analyses} items sequentially (concurrency not implemented).")
-        
-        for i, task in enumerate(analysis_tasks_queue[:max_analyses]): 
+
+        for i, task in enumerate(analysis_tasks_queue[:max_analyses]):
             logger.info(f"Analyzing item {i+1}/{len(analysis_tasks_queue[:max_analyses])}: ({task['type']}) {task['path']}")
             ollama_analysis = ollama_interface.analyze_system_item(
                 item_content=task['content'], item_path=task['path'], item_type=task['type']
@@ -349,7 +349,7 @@ class Orchestrator:
             logger.info("No enhancements conceived by Ollama in this cycle.")
             logger.info("--- Enhancement cycle ended (no plan from Ollama) ---")
             return
-        
+
         logger.info(f"Overall AI Strategy: {enhancement_plan.get('overall_strategy_summary', 'Not provided.')}")
 
         logger.info("Phase 3: Applying Enhancements...")
@@ -359,10 +359,10 @@ class Orchestrator:
                 break
 
             item_path_enh = enhancement.get("item_path") # Renamed to avoid conflict
-            item_type_enh = enhancement.get("item_type") 
+            item_type_enh = enhancement.get("item_type")
             proposed_details_enh = enhancement.get("proposed_change_details", {})
             change_type_enh = str(proposed_details_enh.get("type", "")).lower()
-            
+
             log_msg_enh_cycle = f"Considering enhancement for '{item_path_enh}' ({item_type_enh}, type: {change_type_enh}): {enhancement.get('justification', 'N/A')}"
             logger.info(log_msg_enh_cycle)
             logger.info(f"Risk: {enhancement.get('risk_assessment', 'N/A')}, Impact: {enhancement.get('impact_level', 'N/A')}")
@@ -376,7 +376,7 @@ class Orchestrator:
             if not self.request_human_approval_if_needed(enhancement):
                 logger.info(f"Enhancement skipped (human disapproval or non-interactive rejection): {item_path_enh}")
                 continue
-            
+
             is_new_file = "create_new" in change_type_enh or "new_script_creation" in change_type_enh
             backup_file_path = None
             if not is_new_file:
@@ -389,7 +389,7 @@ class Orchestrator:
                     logger.error(f"Backup failed for '{item_path_enh}'. Skipping enhancement.")
                     self.system_stability_score = max(0, self.system_stability_score - 10)
                     continue
-            
+
             apply_success = False
             content_for_change = None
             task_desc_for_llm = proposed_details_enh.get('task_description', enhancement.get('justification', 'Apply system enhancement.'))
@@ -401,38 +401,38 @@ class Orchestrator:
                     task_description=task_desc_for_llm,
                     language=language_for_llm,
                     existing_code_context=enhancement.get("current_relevant_content_snippet"),
-                    modification_target_details=proposed_details_enh 
+                    modification_target_details=proposed_details_enh
                 )
                 if not content_for_change:
                     logger.error(f"Failed to generate content from Ollama for: {item_path_enh}")
                     self.system_stability_score = max(0, self.system_stability_score - 5)
-                    continue 
-            else: 
+                    continue
+            else:
                 content_keys = ["code_to_insert_or_replace", "new_code_snippet", "new_content", "new_line_content", "block_content"]
                 for key in content_keys:
                     if key in proposed_details_enh:
                         content_for_change = proposed_details_enh[key]
                         break
-                if content_for_change is None and not is_new_file: 
+                if content_for_change is None and not is_new_file:
                     logger.warning(f"No code generation requested, and no pre-defined content found in proposed_change_details for existing item '{item_path_enh}'.")
-            
+
             if is_new_file:
-                if content_for_change is None: 
+                if content_for_change is None:
                      logger.info(f"Content for new file '{item_path_enh}' not pre-defined, generating now.")
                      content_for_change = ollama_interface.generate_code_or_modification(task_desc_for_llm, language_for_llm)
-                
+
                 if content_for_change is not None:
-                    make_executable = item_type_enh == "script" 
+                    make_executable = item_type_enh == "script"
                     apply_success = enhancement_applier.create_new_file(item_path_enh, content_for_change, make_executable)
                 else:
                     logger.error(f"Failed to obtain content for new {item_type_enh}: {item_path_enh}")
-            
+
             elif item_type_enh == "script":
                 if content_for_change is not None:
                     apply_success = enhancement_applier.apply_script_modification(item_path_enh, proposed_details_enh, content_for_change, backup_file_path)
                 else:
                     logger.error(f"No content (generated or pre-defined) for script modification: {item_path_enh}")
-            
+
             elif item_type_enh == "config":
                 old_snippet_keys_cfg = ["target_marker_or_snippet", "target_pattern", "target_line_pattern"] # Renamed
                 old_snippet_val_cfg = next((proposed_details_enh[k] for k in old_snippet_keys_cfg if k in proposed_details_enh), None) # Renamed
@@ -442,14 +442,14 @@ class Orchestrator:
                 if "append" in config_change_type_apply: old_snippet_val_cfg = "APPEND_MODE"
                 elif "prepend" in config_change_type_apply: old_snippet_val_cfg = "PREPEND_MODE"
                 elif "overwrite" in config_change_type_apply or "replace_entire" in config_change_type_apply : old_snippet_val_cfg = "OVERWRITE_MODE"
-                
+
                 if content_for_change is not None and old_snippet_val_cfg is not None:
                     apply_success = enhancement_applier.apply_config_text_change(
                         item_path_enh, old_snippet_val_cfg, content_for_change, backup_file_path
                     )
                 elif old_snippet_val_cfg is None:
                      logger.error(f"Cannot apply config change to {item_path_enh}: missing target snippet/pattern and not append/prepend/overwrite.")
-                else: 
+                else:
                      logger.warning(f"Config change for {item_path_enh} specified target but no new content; 'delete' type not fully supported.")
             else:
                 logger.warning(f"Unknown enhancement item_type: {item_type_enh} for path {item_path_enh}")
@@ -460,8 +460,8 @@ class Orchestrator:
             else:
                 logger.error(f"Failed to apply enhancement for: {item_path_enh}")
                 self.system_stability_score = max(0, self.system_stability_score - 15)
-            
-            self.monitor_system_health() 
+
+            self.monitor_system_health()
 
             if self.human_intervention_required:
                 self._log_user_alert(f"System instability after attempting change to {item_path_enh}. Intervention needed.", "CRITICAL")
@@ -472,20 +472,20 @@ class Orchestrator:
                         self.system_stability_score = max(0, self.system_stability_score - 20)
                     else:
                         logger.critical(f"CRITICAL: Failed to rollback {item_path_enh} despite instability!")
-                elif is_new_file and system_analyzer.pathlib.Path(item_path_enh).exists(): 
+                elif is_new_file and system_analyzer.pathlib.Path(item_path_enh).exists():
                     logger.info(f"Attempting to delete newly created file {item_path_enh} due to instability.")
                     try: system_analyzer.pathlib.Path(item_path_enh).unlink(); logger.info(f"Deleted {item_path_enh}.")
                     except Exception as e_del: logger.error(f"Failed to delete {item_path_enh}: {e_del}")
-                break 
+                break
 
         logger.info(f"--- Enhancement cycle completed. Current Stability: {self.system_stability_score:.2f} ---")
 
 
     def run(self):
         """ Main execution loop for the Orchestrator. """
-        global logger 
+        global logger
         if not logger.hasHandlers() or isinstance(logger, logging.RootLogger) or logger.name == "Orchestrator_direct":
-            logger = logger_setup.setup_logger("Orchestrator", log_level=logging.INFO) 
+            logger = logger_setup.setup_logger("Orchestrator", log_level=logging.INFO)
             logger.info("Orchestrator logger re-initialized for run.")
 
         logger.info(f"AI OS Enhancer starting up. PID: {os.getpid()}")
@@ -502,18 +502,18 @@ class Orchestrator:
         try:
             cycle_count = 0
             is_test_run = os.getenv("AIOS_TEST_QUICK_CYCLE", "false").lower() == "true"
-            
+
             while True:
                 cycle_count += 1
                 logger.info(f"====== Starting Orchestrator Cycle #{cycle_count} (Stability: {self.system_stability_score:.2f}) ======")
-                
+
                 min_stability_threshold = getattr(config, 'MIN_STABILITY_FOR_CYCLE', 30)
                 if self.system_stability_score < min_stability_threshold:
                     logger.error(f"System stability ({self.system_stability_score:.2f}) is below threshold ({min_stability_threshold}). Skipping enhancement cycle. Requiring human intervention.")
                     self.human_intervention_required = True
                 else:
                     self.main_enhancement_cycle()
-                
+
                 self.monitor_system_health()
 
                 if self.human_intervention_required:
@@ -524,18 +524,18 @@ class Orchestrator:
                             logger.info("Orchestrator stopped by user command.")
                             break
                         elif user_input == 'continue':
-                            self.human_intervention_required = False 
-                            self.system_stability_score = max(50, self.system_stability_score) 
+                            self.human_intervention_required = False
+                            self.system_stability_score = max(50, self.system_stability_score)
                             logger.info("Human intervention flag 'cleared' by user. Resuming operations.")
                         else:
                             logger.warning("Invalid command. Assuming pause continues.")
                     except (KeyboardInterrupt, EOFError):
                         logger.info("Orchestrator stopped by user (Ctrl+C or EOF) during human intervention pause.")
                         break
-                
+
                 sleep_interval_seconds = 30 if is_test_run else getattr(config, 'CYCLE_SLEEP_INTERVAL_SECONDS', 3600)
                 if self.system_stability_score < 60 and not is_test_run : sleep_interval_seconds *= 2
-                
+
                 logger.info(f"Cycle #{cycle_count} finished. Next cycle in {sleep_interval_seconds}s.")
                 time.sleep(sleep_interval_seconds)
 
