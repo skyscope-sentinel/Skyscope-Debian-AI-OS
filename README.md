@@ -1,5 +1,5 @@
 Skyscope Sentinel Intelligence presents
-# AI-Driven OS Enhancer for Debian
+# Skyscope Sentinel AI OS
 Developer Casey Jay Topojani
 
 
@@ -10,6 +10,9 @@ The AI-Driven OS Enhancer is a Python application designed to conceptualize how 
 **Current Status: Experimental Proof-of-Concept**
 
 This project translates a detailed pseudo code specification into a functional Python application. It implements the core logic for system analysis, LLM interaction, and change application, but it requires careful setup, configuration, and human oversight.
+
+![Skyscope Sentinel Boot Splash](./Skyscope-Sentinel-AI-OS.png)
+
 
 ## !!! CRITICAL WARNINGS !!!
 
@@ -51,7 +54,10 @@ This project translates a detailed pseudo code specification into a functional P
     *   Can now process 'shell_task' proposals from the AI strategist, which involves generating specific shell commands (using a dedicated AI role) for approval and subsequent execution.
 *   **Human Approval Workflow:** Prompts for human confirmation for changes based on configurable risk/impact thresholds, including detailed display of proposed shell commands and their assessed risks.
 *   **Basic System Health Monitoring:** Includes a rudimentary system stability score and can trigger human intervention alerts.
+enhancements-suite-1
 *   **Multi-Agent Foundations:** Includes initial support for managing multiple AI agents with distinct roles and conversation histories (see "Multi-Agent Architecture" section).
+=======
+main
 
 ## AI Personas (Roles)
 
@@ -68,6 +74,7 @@ To allow for more specialized and configurable LLM behaviors, the AI OS Enhancer
 Each role YAML file should follow this structure:
 
 ```yaml
+enhancements-suite-1
 role_name: MyCustomRole        # Mandatory, unique name for the role (case-sensitive)
 author: "YourName/TeamName"  # Optional, creator of the role definition
 version: "1.0.0"             # Optional, version of the role definition
@@ -80,11 +87,23 @@ system_prompt: | # Mandatory, the detailed system prompt for the LLM
   Your primary task is to {task_description}.
   Analyze the {item_type} at '{item_path}'.
   Always follow these guidelines...
+=======
+role_name: MyCustomRole # Mandatory, unique name for the role (case-sensitive)
+description: "A human-readable description of what this role does." # Optional
+system_prompt: | # Mandatory, the detailed system prompt for the LLM
+  You are a specialized AI assistant for [specific domain].
+  Your primary task is to [describe task].
+  Always follow these guidelines:
+  1. Guideline one.
+  2. Guideline two.
+  When responding to [specific type of input], provide [specific type of output].
+main
 model_name: "ollama_model_name:tag" # Optional, overrides the global default model for this role
 knowledge_base_keywords: # Optional, list of keywords to load relevant documents
   - "custom_topic_1"
   - "specific_tool_guide"
 output_format: "json" # Optional, e.g., "json" or "text". Defines expected LLM output style.
+enhancements-suite-1
 expected_llm_output_keys: # Optional, list of keys expected in JSON output
   - "top_level_key"
   - "parent_object.nested_key"
@@ -104,15 +123,34 @@ expected_llm_output_keys: # Optional, list of keys expected in JSON output
 *   `knowledge_base_keywords` (list of strings, optional): A list of keywords. If provided, the system will attempt to load corresponding `.txt` files from the `knowledge_base/keywords/` directory to augment the LLM's context when this role is active.
 *   `output_format` (string, optional): Specifies the expected format of the LLM's response. Common values are `"json"` (if structured data is required, in which case the `system_prompt` should detail the JSON schema) or `"text"` (for free-form textual output). The default behavior in the application might vary by function if this is not set (e.g., analysis functions typically default to expecting JSON).
 *   `expected_llm_output_keys` (list of strings, optional): If `output_format` is `json`, this field can list top-level or dot-notated nested keys (e.g., `"risk_assessment.risk_level"`) that the LLM's JSON response is expected to contain. The system will validate the presence of these keys, helping to ensure the LLM adheres to the desired output structure.
+=======
+                      # If "json", specific JSON structures are usually defined in the system_prompt.
+                      # Defaults vary by function if not set here (e.g., analysis expects JSON).
+```
+
+**Key Fields:**
+*   `role_name` (string, mandatory): The unique identifier for the role. This is used to load the role.
+*   `description` (string, optional): Helps users understand the role's purpose.
+*   `system_prompt` (string, mandatory): The core instruction given to the LLM, defining its persona, task, and any specific output requirements. Multi-line YAML strings (using `|`) are recommended for readability.
+*   `model_name` (string, optional): If specified, this role will use this Ollama model, overriding the global default model (`AIOS_DEFAULT_MODEL` or the default in `config.py`).
+*   `knowledge_base_keywords` (list of strings, optional): A list of keywords. If provided, the system will attempt to load corresponding `.txt` files from the `knowledge_base/keywords/` directory to augment the LLM's context when this role is active.
+*   `output_format` (string, optional): Specifies the expected format of the LLM's response. Common values are `"json"` (if structured data is required, in which case the `system_prompt` should detail the JSON schema) or `"text"` (for free-form textual output). The default behavior in the application might vary by function if this is not set (e.g., analysis functions typically default to expecting JSON).
+main
 
 ### Default Roles
 
 The system currently includes the following predefined roles:
 
+enhancements-suite-1
 *   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` uses `{item_path}` and `{item_type}` placeholders to guide the LLM. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
 *   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks, which can now include `shell_task` types for system-level operations. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
 *   **`ShellCommandGenerator`**: Translates natural language tasks (often proposed by the `EnhancementStrategist` as a `shell_task`) into specific shell command suggestions, including a structured risk assessment, prerequisites, safety notes, and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
 *   **`PythonCodeGenerator`**: Specializes in generating Python code snippets based on a task description. Uses placeholders for `{language}`, `{task_description}`, and `{existing_code_context}` in its prompt. Expects JSON output with a `code` field. (See `ai_os_enhancer/roles/python_code_generator.yaml`)
+=======
+*   **`GenericSystemItemAnalyzer`**: Used for the general analysis of system configuration files and scripts. Its `system_prompt` guides the LLM to identify issues and suggest enhancements for individual items. (See `ai_os_enhancer/roles/generic_system_item_analyzer.yaml`)
+*   **`EnhancementStrategist`**: Used for conceiving the overall enhancement strategy from multiple analyses and a system snapshot. Its `system_prompt` instructs the LLM to produce a prioritized list of enhancement tasks, which can now include `shell_task` types for system-level operations. (See `ai_os_enhancer/roles/enhancement_strategist.yaml`)
+*   **`ShellCommandGenerator`**: Translates natural language tasks (often proposed by the `EnhancementStrategist` as a `shell_task`) into specific shell command suggestions, including a structured risk assessment, prerequisites, safety notes, and alternatives. (See `ai_os_enhancer/roles/shell_command_generator.yaml`)
+main
 
 These files serve as examples of how to structure role configurations.
 

@@ -1,6 +1,9 @@
 role_name: ShellCommandGenerator
+enhancements-suite-1
 version: "1.1.0"
 author: "SkyscopeAI/Jules"
+=======
+main
 description: "Translates natural language task descriptions into Debian 13 shell commands, providing the command, structured risk assessment, prerequisites, and safety considerations."
 system_prompt: |
   You are an expert Debian 13 system administrator and shell command generator.
@@ -59,6 +62,7 @@ knowledge_base_keywords:
   - systemd_cli
   - security_best_practices
 output_format: json
+enhancements-suite-1
 expected_llm_output_keys:
   - task_description
   - generated_command
@@ -75,3 +79,5 @@ tags:
   - shell_command
   - debian_cli
   - automation_scripting
+=======
+main

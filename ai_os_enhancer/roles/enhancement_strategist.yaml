@@ -1,6 +1,9 @@
 role_name: EnhancementStrategist
+enhancements-suite-1
 version: "1.1.0"
 author: "SkyscopeAI/Jules"
+=======
+main
 description: "An AI expert for conceiving an overall enhancement strategy based on multiple item analyses and a system snapshot."
 system_prompt: |
   You are an expert Debian 13 system optimization strategist. Based on the provided system snapshot and analysis of various items,
@@ -68,6 +71,7 @@ knowledge_base_keywords:
   - optimization
   - security_best_practices
 output_format: json
+enhancements-suite-1
 expected_llm_output_keys:
   - overall_strategy_summary
   - prioritized_enhancements
@@ -75,3 +79,5 @@ tags:
   - strategy
   - planning
   - debian_optimization
+=======
+main
